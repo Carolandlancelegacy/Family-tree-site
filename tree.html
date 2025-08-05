@@ -16,26 +16,30 @@
     }
     h1 {
       text-align: center;
-      margin-top: 10px;
+      margin: 10px 0;
     }
     svg {
       width: 100%;
-      height: calc(100% - 50px);
+      height: calc(100% - 40px);
       background: #fdfbf7;
+      cursor: move;
     }
-    .node circle {
+    .node rect {
       fill: white;
       stroke: #333;
-      stroke-width: 2px;
+      stroke-width: 1.5px;
+      rx: 6;
+      ry: 6;
     }
     .node text {
-      font-size: 14px;
-      fill: #333;
+      font-size: 13px;
+      fill: #222;
+      pointer-events: none;
     }
     .link {
       fill: none;
       stroke: #bbb;
-      stroke-width: 2px;
+      stroke-width: 1.5px;
     }
   </style>
 </head>
@@ -47,11 +51,8 @@
     const svg = d3.select("#tree-svg");
     const g = svg.append("g");
 
-    const treeLayout = d3.tree().nodeSize([200, 150]);
-
-    // Enable zoom and pan
     const zoom = d3.zoom()
-      .scaleExtent([0.1, 2])
+      .scaleExtent([0.2, 2])
       .on("zoom", (event) => {
         g.attr("transform", event.transform);
       });
@@ -60,6 +61,8 @@
 
     d3.json("tree.json").then(data => {
       const root = d3.hierarchy(data);
+
+      const treeLayout = d3.tree().nodeSize([160, 120]);
       treeLayout(root);
 
       // Draw links
@@ -67,7 +70,7 @@
         .data(root.links())
         .join("path")
         .attr("class", "link")
-        .attr("d", d3.linkVertical()
+        .attr("d", d3.linkHorizontal()
           .x(d => d.x)
           .y(d => d.y));
 
@@ -78,26 +81,32 @@
         .attr("class", "node")
         .attr("transform", d => `translate(${d.x},${d.y})`);
 
-      node.append("circle").attr("r", 20);
+      node.append("rect")
+        .attr("x", -75)
+        .attr("y", -15)
+        .attr("width", 150)
+        .attr("height", 30)
+        .attr("rx", 10)
+        .attr("ry", 10);
+
       node.append("text")
-        .attr("dy", 5)
-        .attr("x", d => d.children ? -25 : 25)
-        .style("text-anchor", d => d.children ? "end" : "start")
+        .attr("text-anchor", "middle")
+        .attr("dy", "0.35em")
         .text(d => d.data.name);
 
-      // Center the initial view
+      // Auto-center
       const xExtent = d3.extent(root.descendants(), d => d.x);
       const yExtent = d3.extent(root.descendants(), d => d.y);
 
-      const initialX = (xExtent[0] + xExtent[1]) / 2;
-      const initialY = (yExtent[0] + yExtent[1]) / 2;
+      const centerX = (xExtent[0] + xExtent[1]) / 2;
+      const centerY = (yExtent[0] + yExtent[1]) / 2;
 
-      svg.transition().duration(500).call(
+      svg.call(
         zoom.transform,
         d3.zoomIdentity
           .translate(svg.node().clientWidth / 2, 100)
-          .scale(0.7)
-          .translate(-initialX, -initialY)
+          .scale(0.6)
+          .translate(-centerX, -centerY)
       );
     });
   </script>
