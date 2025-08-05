@@ -1,40 +1,30 @@
 body {
-  font-family: sans-serif;
-  text-align: center;
-  padding: 2em;
-  background: #f7f5f0;
-}
-
-ul {
-  list-style-type: none;
+  font-family: "Segoe UI", sans-serif;
   margin: 0;
-  padding-left: 20px;
-  position: relative;
+  overflow: hidden;
+  background: #fdfaf6;
 }
 
-ul::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 10px;
-  bottom: 0;
-  width: 1px;
-  background: #ccc;
+.node rect {
+  fill: white;
+  stroke: #333;
+  stroke-width: 1.5px;
+  rx: 6;
+  ry: 6;
 }
 
-li {
-  margin: 0;
-  padding: 10px 0 0 20px;
-  position: relative;
-  text-align: left;
+.node.spouse rect {
+  fill: #f8f8f8;
+  stroke: #999;
 }
 
-li::before {
-  content: '';
-  position: absolute;
-  top: 10px;
-  left: 0;
-  width: 10px;
-  height: 1px;
-  background: #ccc;
+.node text {
+  font-size: 12px;
+  pointer-events: none;
+}
+
+.link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 1.5px;
 }
