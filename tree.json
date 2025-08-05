@@ -8,14 +8,14 @@
           "name": "Patrick Sheen",
           "marriages": [
             {
-              "spouse": "Kathleen",
+              "spouse": "Kathleen Wurth",
               "divorced": true,
               "children": [
                 { "name": "Myf (daughter, first marriage)" }
               ]
             },
             {
-              "spouse": "Suzi (current wife)",
+              "spouse": "Suzi Sheen(current wife)",
               "children": [
                 { "name": "Rebecca (stepdaughter, Suzi's child)" },
                 { "name": "[Son] (Suzi's child)" }
@@ -27,16 +27,16 @@
           "name": "Elizabeth (Libby) O'Neill",
           "marriages": [
             {
-              "spouse": "Pat (deceased)",
+              "spouse": "Pat O'Neill (deceased)",
               "children": [
                 {
-                  "name": "Caroline",
+                  "name": "Caroline Mackenzie",
                   "marriages": [
                     {
-                      "spouse": "Alex",
+                      "spouse": "Alex Mackenzie",
                       "children": [
-                        { "name": "Edith" },
-                        { "name": "Patrick" }
+                        { "name": "Edith Mackenzie" },
+                        { "name": "Patrick Mackenzie" }
                       ]
                     }
                   ]
@@ -51,12 +51,19 @@
           "name": "Martin Sheen",
           "marriages": [
             {
-              "spouse": "Tracy",
+              "spouse": "Tracy Sheen",
               "children": [
-                { "name": "Anthony (oldest brother)" },
-                { "name": "Ben (You)" },
-                { "name": "Emma (sister, deceased)" },
-                { "name": "Jordan (youngest sister)" }
+                { 
+                  "name": "Anthony Sheen",
+                  "marriages": [
+                    {
+                      "spouse": "Daniel Moore",
+                      "children": [
+                        { "name": "Brock" },
+                      ]
+                { "name": "Ben Sheen(You)" },
+                { "name": "Emma Sheen(sister, deceased)" },
+                { "name": "Jordan Sheen(youngest sister)" }
               ]
             }
           ]
@@ -65,7 +72,7 @@
           "name": "Andrew Sheen",
           "marriages": [
             {
-              "spouse": "Dennis",
+              "spouse": "Dennis Karatu",
               "divorced": true,
               "children": [
                 { "name": "Zanesha" }
