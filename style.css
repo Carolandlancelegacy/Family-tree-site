@@ -1,26 +1,40 @@
-body { font-family: sans-serif; text-align: center; padding: 2em; background: #f7f5f0; }
-.login-box { margin: 100px auto; width: 300px; }
-input, button { margin-top: 10px; padding: 10px; width: 100%; }
+body {
+  font-family: sans-serif;
+  text-align: center;
+  padding: 2em;
+  background: #f7f5f0;
+}
+
 ul {
   list-style-type: none;
-  padding-left: 2em; /* More indentation */
-  border-left: 2px solid #999;
-  margin-left: 1em;
+  margin: 0;
+  padding-left: 20px;
+  position: relative;
+}
+
+ul::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 10px;
+  bottom: 0;
+  width: 1px;
+  background: #ccc;
 }
 
 li {
-  margin: 0.5em 0;
-  padding-left: 1em; /* Additional spacing inside node */
+  margin: 0;
+  padding: 10px 0 0 20px;
   position: relative;
+  text-align: left;
 }
 
 li::before {
   content: '';
   position: absolute;
-  top: 0.75em;
-  left: -1em;
-  width: 1em;
-  height: 0;
-  border-top: 1px solid #999;
+  top: 10px;
+  left: 0;
+  width: 10px;
+  height: 1px;
+  background: #ccc;
 }
-
