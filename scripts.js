@@ -49,12 +49,14 @@ defs.append("pattern")
   .attr("patternUnits", "objectBoundingBox")
   .attr("width", 1)
   .attr("height", 1)
-  .append("image")
-  .attr("href", "leaf-removebg-preview.png") // or your full hosted GitHub path
-  .attr("width", 80)
-  .attr("height", 80)
-  .attr("x", 0)
-  .attr("y", 0);
+  node.append("image")
+  .attr("xlink:href", "leaf-removebg-preview.png")  // your leaf image file
+  .attr("x", -50)  // shift to centre
+  .attr("y", -50)
+  .attr("width", 100)  // increase size here (try 120 if needed)
+  .attr("height", 100)
+  .attr("preserveAspectRatio", "xMidYMid slice");
+
 
 const leafPath = "M0,-40 C40,-40 40,40 0,40 C-40,40 -40,-40 0,-40 Z";
 
