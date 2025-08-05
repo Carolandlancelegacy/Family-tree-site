@@ -7,37 +7,68 @@
 <body>
   <h1>Family Tree Viewer</h1>
   <p id="placeholder">This is where your visual tree will appear.</p>
-  <script>
-    fetch('tree.json')
-      .then(response => response.json())
-      .then(data => {
-        console.log('Tree data loaded:', data);
-        document.getElementById('placeholder').remove(); // remove that line
-        const treeContainer = document.createElement('div');
-        document.body.appendChild(treeContainer);
-        renderTree(data, treeContainer);
-      })
-      .catch(error => {
-        console.error('Error loading tree data:', error);
-      });
+  <!-- Replace your old <script> with this in <body> -->
+<script>
+fetch('tree.json')
+  .then(response => response.json())
+  .then(data => {
+    const width = 1000;
+    const dx = 60;
+    const dy = 200;
 
-    function renderTree(data, container) {
-      const ul = document.createElement('ul');
-      const li = document.createElement('li');
-      li.textContent = data.name;
-      ul.appendChild(li);
+    const tree = d3.tree().nodeSize([dx, dy]);
+    const diagonal = d3.linkVertical()
+      .x(d => d.x)
+      .y(d => d.y);
 
-      if (data.children && data.children.length > 0) {
-        const childrenUL = document.createElement('ul');
-        data.children.forEach(child => {
-          renderTree(child, childrenUL);
-        });
-        li.appendChild(childrenUL);
-      }
+    const root = d3.hierarchy(data);
+    root.x0 = dy / 2;
+    root.y0 = 0;
+    tree(root);
 
-      container.appendChild(ul);
-    }
-  </script>
+    const svg = d3.select("body").append("svg")
+      .attr("width", width)
+      .attr("height", 1000)
+      .attr("viewBox", [-width / 2, 0, width, 1000])
+      .style("font", "14px sans-serif");
+
+    const g = svg.append("g");
+
+    const link = g.append("g")
+      .attr("fill", "none")
+      .attr("stroke", "#555")
+      .attr("stroke-opacity", 0.6)
+      .attr("stroke-width", 1.5)
+      .selectAll("path")
+      .data(root.links())
+      .join("path")
+      .attr("d", diagonal);
+
+    const node = g.append("g")
+      .attr("stroke-linejoin", "round")
+      .attr("stroke-width", 3)
+      .selectAll("g")
+      .data(root.descendants())
+      .join("g")
+      .attr("transform", d => `translate(${d.x},${d.y})`);
+
+    node.append("rect")
+      .attr("fill", "#f8f8f8")
+      .attr("stroke", "#333")
+      .attr("rx", 10)
+      .attr("ry", 10)
+      .attr("x", -70)
+      .attr("y", -20)
+      .attr("width", 140)
+      .attr("height", 40);
+
+    node.append("text")
+      .attr("dy", "0.32em")
+      .attr("text-anchor", "middle")
+      .text(d => d.data.name);
+  });
+</script>
+
 </body>
 
 </html>
