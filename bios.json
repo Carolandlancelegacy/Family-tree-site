@@ -3,12 +3,12 @@
     "image": "ben.jpg",
     "birthdate": "14 October 1988",
     "starsign": "Libra",
-    "interests": ["Wine", "Technology", "Design", "Spirituality", "Dungeons & Dragons"]
+    "interests": ["Wine", "Technology", "Art"]
   },
   "Jordan Sheen(youngest sister)": {
     "image": "jordan.jpg",
     "birthdate": "2 February 1997",
     "starsign": "Aquarius",
-    "interests": ["Reading", "Dogs", "Beach walks"]
+    "interests": ["Reading", "Dogs", "Music"]
   }
 }
