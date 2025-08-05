@@ -22,10 +22,6 @@ d3.json("tree.json").then(data => {
 
   // existing code continues...
 
-  const rootData = buildRoot(data);
-  const root = d3.hierarchy(rootData);
-  treeLayout(root);
-
   // Draw links
   svgGroup.selectAll(".link")
     .data(root.links())
