@@ -9,28 +9,30 @@ const svg = d3.select("svg")
   }));
 
 const svgGroup = svg.append("g");
-
-const treeLayout = d3.tree().nodeSize([160, 120]);
+const treeLayout = d3.tree().nodeSize([180, 120]);
 
 d3.json("tree.json").then(data => {
-  const parsed = buildRoot(data);
-  const root = d3.hierarchy(parsed);
+  const rootData = buildRoot(data);
+  const root = d3.hierarchy(rootData);
   treeLayout(root);
 
-  svgGroup.selectAll("path.link")
+  // Draw links
+  svgGroup.selectAll(".link")
     .data(root.links())
     .enter()
     .append("path")
-    .attr("class", "link")
+    .attr("class", d => {
+      return "link" + (d.target.data.divorced ? " divorced" : "");
+    })
     .attr("fill", "none")
-    .attr("stroke", d => d.target.data.isDivorced ? "#999" : "#aaa")
-    .attr("stroke-dasharray", d => d.target.data.isDivorced ? "4,2" : "0")
+    .attr("stroke", "#ccc")
     .attr("stroke-width", 2)
     .attr("d", d3.linkVertical()
       .x(d => d.x)
       .y(d => d.y));
 
-  const node = svgGroup.selectAll("g.node")
+  // Draw nodes
+  const node = svgGroup.selectAll(".node")
     .data(root.descendants())
     .enter()
     .append("g")
@@ -58,39 +60,17 @@ function buildRoot(person) {
 
   if (person.marriages) {
     person.marriages.forEach(marriage => {
-      const coupleNode = {
-        name: `${person.name} + ${marriage.spouse}`,
-        isDivorced: marriage.divorced || false,
+      const couple = {
+        name: `${person.name} & ${marriage.spouse}`,
+        divorced: marriage.divorced || false,
         children: []
       };
 
       if (marriage.children) {
-        coupleNode.children = marriage.children.map(buildTree);
+        couple.children = marriage.children.map(buildRoot);
       }
 
-      node.children.push(coupleNode);
-    });
-  }
-
-  return node;
-}
-
-function buildTree(person) {
-  const node = { name: person.name, children: [] };
-
-  if (person.marriages) {
-    person.marriages.forEach(marriage => {
-      const coupleNode = {
-        name: `${person.name} + ${marriage.spouse}`,
-        isDivorced: marriage.divorced || false,
-        children: []
-      };
-
-      if (marriage.children) {
-        coupleNode.children = marriage.children.map(buildTree);
-      }
-
-      node.children.push(coupleNode);
+      node.children.push(couple);
     });
   }
 
