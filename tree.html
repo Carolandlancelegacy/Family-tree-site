@@ -13,8 +13,9 @@
     fetch('tree.json')
       .then(response => response.json())
       .then(data => {
-        const dx = 100;  // vertical spacing
-        const dy = 200;  // horizontal spacing
+        const dx = 200;  // more vertical space between nodes
+        const dy = 220;  // wider spacing horizontally
+
         const width = 1000;
 
         const tree = d3.tree().nodeSize([dx, dy]);
