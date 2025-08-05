@@ -34,7 +34,9 @@ const diagonal = d3.linkHorizontal()
 .attr("viewBox", [-100, 0, 1200, 1000])
       .style("font", "14px sans-serif");
 
-    const g = svg.append("g");
+    const g = svg.append("g")
+  .attr("transform", `translate(${dy / 3},${dx})`);
+
 
     const link = g.append("g")
       .attr("fill", "none")
