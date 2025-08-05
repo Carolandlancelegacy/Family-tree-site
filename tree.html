@@ -31,7 +31,7 @@
 
         const svg = d3.select("body").append("svg")
           .attr("width", width)
-          .attr("height", 1000)
+          .attr("height", root.height * dx + 400)
           .attr("viewBox", [-dy / 3, -dx, width, 1000])
           .style("font", "14px sans-serif")
           .style("user-select", "none");
