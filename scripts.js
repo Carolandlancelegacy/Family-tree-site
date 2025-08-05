@@ -5,91 +5,97 @@ const svg = d3.select("body")
   .append("svg")
   .attr("width", width)
   .attr("height", height)
-  .append("g")
-  .attr("transform", "translate(40,40)");
+  .call(d3.zoom().on("zoom", function (event) {
+    g.attr("transform", event.transform);
+  }))
+  .append("g");
 
-d3.json("tree.json").then(function(data) {
-  const nodes = [];
-  const links = [];
+const g = svg.append("g").attr("transform", "translate(40,40)");
+
+d3.json("tree.json").then(function (data) {
+  const root = d3.hierarchy(data, d => d.children || []);
+  const treeLayout = d3.tree().nodeSize([120, 120]);
+  treeLayout(root);
+
   const marriageLinks = [];
+  const spouseNodes = [];
 
-  let idCounter = 0;
+  function processMarriages(node) {
+    if (node.data.marriages) {
+      node.data.marriages.forEach((m, i) => {
+        const spouseX = node.x + (i + 1) * 120;
+        const spouseY = node.y;
 
-  function traverse(node, x = 0, y = 0, parent = null) {
-    const currentNode = {
-      id: ++idCounter,
-      name: node.name,
-      x: x,
-      y: y,
-      isSpouse: node._isSpouse || false
-    };
-    nodes.push(currentNode);
+        spouseNodes.push({
+          name: m.spouse,
+          x: spouseX,
+          y: spouseY
+        });
 
-    if (parent && !currentNode.isSpouse) {
-      links.push({ source: parent, target: currentNode });
-    }
+        marriageLinks.push({
+          source: { x: node.x, y: node.y },
+          target: { x: spouseX, y: spouseY },
+          divorced: m.divorced
+        });
 
-    if (node.children && Array.isArray(node.children)) {
-      let offsetX = -((node.children.length - 1) * 120) / 2;
-      node.children.forEach((child, i) => {
-        if (child._isSpouse) {
-          const spouseNode = {
-            id: ++idCounter,
-            name: child.name,
-            x: x + 100,
-            y: y,
-            isSpouse: true
-          };
-          nodes.push(spouseNode);
-          marriageLinks.push({
-            source: currentNode,
-            target: spouseNode,
-            divorced: child.name.toLowerCase().includes("divorced")
+        if (m.children) {
+          m.children.forEach((child, j) => {
+            const childX = node.x + j * 120 - (m.children.length - 1) * 60;
+            const childY = node.y + 120;
+
+            // Add child node
+            g.append("g")
+              .attr("class", "node")
+              .attr("transform", `translate(${childX},${childY})`)
+              .call(group => {
+                group.append("rect")
+                  .attr("x", -50)
+                  .attr("y", -10)
+                  .attr("width", 100)
+                  .attr("height", 20)
+                  .attr("rx", 5)
+                  .attr("ry", 5);
+
+                group.append("text")
+                  .attr("dy", 4)
+                  .attr("text-anchor", "middle")
+                  .text(child.name);
+              });
+
+            // Connect spouse to child
+            g.append("path")
+              .attr("class", "link")
+              .attr("d", d3.linkVertical()
+                .source(() => ({ x: (node.x + spouseX) / 2, y: node.y }))
+                .target(() => ({ x: childX, y: childY }))
+              );
           });
-
-          if (child.children) {
-            let offsetChildX = -((child.children.length - 1) * 120) / 2;
-            child.children.forEach((grandchild, j) => {
-              traverse(grandchild, x + offsetChildX + j * 120, y + 120, currentNode);
-            });
-          }
-        } else {
-          traverse(child, x + offsetX + i * 120, y + 120, currentNode);
         }
       });
     }
+
+    if (node.children) {
+      node.children.forEach(processMarriages);
+    }
   }
 
-  traverse(data, width / 2, 40);
+  // Apply tree layout to all descendants
+  treeLayout(root);
 
-  // Draw parent-to-child lines
-  svg.selectAll(".link")
-    .data(links)
+  // Render parent-child links
+  g.selectAll(".link")
+    .data(root.links())
     .enter()
     .append("path")
     .attr("class", "link")
-    .attr("fill", "none")
-    .attr("stroke", "#ccc")
-    .attr("d", d => {
-      return `M${d.source.x},${d.source.y + 10} V${(d.source.y + d.target.y) / 2} H${d.target.x} V${d.target.y - 10}`;
-    });
+    .attr("d", d3.linkVertical()
+      .x(d => d.x)
+      .y(d => d.y)
+    );
 
-  // Draw marriage lines
-  svg.selectAll(".marriage")
-    .data(marriageLinks)
-    .enter()
-    .append("line")
-    .attr("class", "marriage")
-    .attr("x1", d => d.source.x)
-    .attr("y1", d => d.source.y)
-    .attr("x2", d => d.target.x)
-    .attr("y2", d => d.target.y)
-    .attr("stroke", "#666")
-    .attr("stroke-dasharray", d => d.divorced ? "4,4" : "0");
-
-  // Draw nodes
-  const node = svg.selectAll(".node")
-    .data(nodes)
+  // Render main nodes
+  const node = g.selectAll(".node")
+    .data(root.descendants())
     .enter()
     .append("g")
     .attr("class", "node")
@@ -101,12 +107,46 @@ d3.json("tree.json").then(function(data) {
     .attr("width", 100)
     .attr("height", 20)
     .attr("rx", 5)
-    .attr("ry", 5)
-    .attr("fill", "#fff")
-    .attr("stroke", "#000");
+    .attr("ry", 5);
 
   node.append("text")
     .attr("dy", 4)
     .attr("text-anchor", "middle")
-    .text(d => d.name);
+    .text(d => d.data.name);
+
+  // Handle all marriages recursively
+  processMarriages(root);
+
+  // Render spouse nodes
+  g.selectAll(".spouse-node")
+    .data(spouseNodes)
+    .enter()
+    .append("g")
+    .attr("class", "spouse-node")
+    .attr("transform", d => `translate(${d.x},${d.y})`)
+    .call(group => {
+      group.append("rect")
+        .attr("x", -50)
+        .attr("y", -10)
+        .attr("width", 100)
+        .attr("height", 20)
+        .attr("rx", 5)
+        .attr("ry", 5);
+
+      group.append("text")
+        .attr("dy", 4)
+        .attr("text-anchor", "middle")
+        .text(d => d.name);
+    });
+
+  // Render marriage lines
+  g.selectAll(".marriage-link")
+    .data(marriageLinks)
+    .enter()
+    .append("line")
+    .attr("class", d => d.divorced ? "link divorced" : "link")
+    .attr("x1", d => d.source.x)
+    .attr("y1", d => d.source.y)
+    .attr("x2", d => d.target.x)
+    .attr("y2", d => d.target.y);
 });
