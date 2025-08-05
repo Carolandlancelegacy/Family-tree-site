@@ -17,10 +17,11 @@ fetch('tree.json')
     const dx = 60;
     const dy = 200;
 
-    const tree = d3.tree().nodeSize([dx, dy]);
-    const diagonal = d3.linkVertical()
-      .x(d => d.x)
-      .y(d => d.y);
+   const tree = d3.tree().nodeSize([200, 120]); // spread wider and downward
+const diagonal = d3.linkHorizontal()
+  .x(d => d.y)  // flip x/y to make it top-to-bottom
+  .y(d => d.x);
+
 
     const root = d3.hierarchy(data);
     root.x0 = dy / 2;
