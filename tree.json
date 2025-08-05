@@ -1,24 +1,46 @@
 {
-  "name": "Nan & Pop",
+  "name": "Nan Carol Sheen (deceased) & Pop Lance Sheen (deceased)",
   "children": [
     {
-      "name": "Uncle Bob",
+      "name": "Uncle Patrick",
       "children": [
-        { "name": "Cousin Jake", "children": [] },
-        { "name": "Cousin Lily", "children": [] }
+        { "name": "Myf (daughter, first marriage with Kathleen)" },
+        { "name": "Rebecca (stepdaughter, second marriage with Suzi)" },
+        { "name": "Stepson (second marriage with Suzi)" }
       ]
     },
     {
-      "name": "Aunt Sue",
+      "name": "Aunt Elizabeth (Libby O'Neill, widowed)",
       "children": [
-        { "name": "Cousin Max", "children": [] }
+        {
+          "name": "Caroline (married to Alex)",
+          "children": [
+            { "name": "Edith" },
+            { "name": "Patrick" }
+          ]
+        },
+        { "name": "Colleen" },
+        { "name": "Phillip" }
       ]
     },
     {
-      "name": "Dad",
+      "name": "Dad Martin (married to Mum Tracy)",
       "children": [
-        { "name": "You", "children": [] }
+        { "name": "Anthony (oldest brother)" },
+        { "name": "Ben (You)" },
+        { "name": "Emma (sister, deceased)" },
+        { "name": "Jordan (youngest sister)" }
       ]
+    },
+    {
+      "name": "Uncle Andrew (divorced from Dennis)",
+      "children": [
+        { "name": "Zanesha" }
+      ]
+    },
+    {
+      "name": "Aunt Joanne (married Greg)",
+      "children": []
     }
   ]
 }
