@@ -4,26 +4,27 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Family Tree Viewer</title>
-  <link rel="stylesheet" href="style.css" />
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <style>
-    body {
+    html, body {
       margin: 0;
       padding: 0;
-      font-family: sans-serif;
-      text-align: center;
-    }
-    svg {
+      overflow: hidden;
       width: 100vw;
       height: 100vh;
+      font-family: sans-serif;
     }
-    .link {
-      fill: none;
-      stroke: #ccc;
-      stroke-width: 2px;
+    h1 {
+      text-align: center;
+      margin-top: 10px;
+    }
+    svg {
+      width: 100%;
+      height: calc(100% - 50px);
+      background: #fdfbf7;
     }
     .node circle {
-      fill: #fff;
+      fill: white;
       stroke: #333;
       stroke-width: 2px;
     }
@@ -31,11 +32,15 @@
       font-size: 14px;
       fill: #333;
     }
+    .link {
+      fill: none;
+      stroke: #bbb;
+      stroke-width: 2px;
+    }
   </style>
 </head>
 <body>
   <h1>Family Tree Viewer</h1>
-  <p>This is where your visual tree will appear.</p>
   <svg id="tree-svg"></svg>
 
   <script>
@@ -44,24 +49,18 @@
 
     const treeLayout = d3.tree().nodeSize([200, 150]);
 
+    // Enable zoom and pan
+    const zoom = d3.zoom()
+      .scaleExtent([0.1, 2])
+      .on("zoom", (event) => {
+        g.attr("transform", event.transform);
+      });
+
+    svg.call(zoom);
+
     d3.json("tree.json").then(data => {
       const root = d3.hierarchy(data);
       treeLayout(root);
-
-      // Calculate bounds to centre it
-      let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
-      root.descendants().forEach(d => {
-        if (d.x < minX) minX = d.x;
-        if (d.x > maxX) maxX = d.x;
-        if (d.y < minY) minY = d.y;
-        if (d.y > maxY) maxY = d.y;
-      });
-
-      const padding = 100;
-      const width = maxX - minX + padding * 2;
-      const height = maxY - minY + padding * 2;
-
-      svg.attr("viewBox", `${minX - padding} ${minY - padding} ${width} ${height}`);
 
       // Draw links
       g.selectAll(".link")
@@ -85,6 +84,21 @@
         .attr("x", d => d.children ? -25 : 25)
         .style("text-anchor", d => d.children ? "end" : "start")
         .text(d => d.data.name);
+
+      // Center the initial view
+      const xExtent = d3.extent(root.descendants(), d => d.x);
+      const yExtent = d3.extent(root.descendants(), d => d.y);
+
+      const initialX = (xExtent[0] + xExtent[1]) / 2;
+      const initialY = (yExtent[0] + yExtent[1]) / 2;
+
+      svg.transition().duration(500).call(
+        zoom.transform,
+        d3.zoomIdentity
+          .translate(svg.node().clientWidth / 2, 100)
+          .scale(0.7)
+          .translate(-initialX, -initialY)
+      );
     });
   </script>
 </body>
