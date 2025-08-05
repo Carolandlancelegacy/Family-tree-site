@@ -1,19 +1,37 @@
 {
-  "name": "Nan Carol Sheen (deceased) & Pop Lance Sheen (deceased)",
+  "name": "Carol Sheen",
+  "deceased": true,
+  "spouse": {
+    "name": "Lance Sheen",
+    "deceased": true
+  },
   "children": [
     {
-      "name": "Uncle Patrick",
-      "children": [
-        { "name": "Myf (daughter, first marriage with Kathleen)" },
-        { "name": "Rebecca (stepdaughter, second marriage with Suzi)" },
-        { "name": "Stepson (second marriage with Suzi)" }
-      ]
+      "name": "Patrick Sheen",
+      "spouse": {
+        "name": "Suzi",
+        "children": [
+          { "name": "Rebecca (Stepdaughter)" },
+          { "name": "Son (Stepson)" }
+        ]
+      },
+      "exSpouse": {
+        "name": "Kathleen",
+        "children": [
+          { "name": "Myf" }
+        ]
+      }
     },
     {
-      "name": "Aunt Elizabeth (Libby O'Neill, widowed)",
+      "name": "Elizabeth (Libby) O'Neill",
+      "spouse": {
+        "name": "Pat (deceased)",
+        "deceased": true
+      },
       "children": [
         {
-          "name": "Caroline (married to Alex)",
+          "name": "Caroline",
+          "spouse": { "name": "Alex" },
           "children": [
             { "name": "Edith" },
             { "name": "Patrick" }
@@ -24,23 +42,31 @@
       ]
     },
     {
-      "name": "Dad Martin (married to Mum Tracy)",
-      "children": [
-        { "name": "Anthony (oldest brother)" },
-        { "name": "Ben (You)" },
-        { "name": "Emma (sister, deceased)" },
-        { "name": "Jordan (youngest sister)" }
-      ]
+      "name": "Martin Sheen",
+      "spouse": {
+        "name": "Tracy",
+        "children": [
+          { "name": "Anthony" },
+          { "name": "Ben (You)" },
+          { "name": "Emma", "deceased": true },
+          { "name": "Jordan" }
+        ]
+      }
     },
     {
-      "name": "Uncle Andrew (divorced from Dennis)",
-      "children": [
-        { "name": "Zanesha" }
-      ]
+      "name": "Andrew Sheen",
+      "exSpouse": {
+        "name": "Dennis",
+        "children": [
+          { "name": "Zanesha" }
+        ]
+      }
     },
     {
-      "name": "Aunt Joanne (married Greg)",
-      "children": []
+      "name": "Joanne Sheen",
+      "spouse": {
+        "name": "Greg"
+      }
     }
   ]
 }
