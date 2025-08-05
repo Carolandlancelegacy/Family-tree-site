@@ -2,7 +2,7 @@
   "name": "Carol Sheen",
   "marriages": [
     {
-      "spouse": "Lance (deceased)",
+      "spouse": "Lance Sheen",
       "children": [
         {
           "name": "Patrick Sheen",
@@ -11,11 +11,11 @@
               "spouse": "Kathleen Wurth",
               "divorced": true,
               "children": [
-                { "name": "Myf (daughter, first marriage)" }
+                { "name": "Myf " }
               ]
             },
             {
-              "spouse": "Suzi Sheen(current wife)",
+              "spouse": "Suzi Sheen",
               "children": [
                 { "name": "Rebecca (stepdaughter, Suzi's child)" },
                 { "name": "[Son] (Suzi's child)" }
@@ -27,7 +27,7 @@
           "name": "Elizabeth (Libby) O'Neill",
           "marriages": [
             {
-              "spouse": "Pat O'Neill (deceased)",
+              "spouse": "Pat O'Neill",
               "children": [
                 {
                   "name": "Caroline Mackenzie",
@@ -64,9 +64,9 @@
             }
           ]
         },
-        { "name": "Ben Sheen(You)" },
-        { "name": "Emma Sheen(sister, deceased)" },
-        { "name": "Jordan Sheen(youngest sister)" }
+        { "name": "Ben Sheen" },
+        { "name": "Emma Sheen" },
+        { "name": "Jordan Sheen" }
       ]
     }
   ]
