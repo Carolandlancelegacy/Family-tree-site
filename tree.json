@@ -1,7 +1,79 @@
 {
   "people": [
     {
+      "name": "Carol Sheen",{
+  "people": [
+    {
       "name": "Carol Sheen",
+      "gender": "female"
+    },
+    {
+      "name": "Lance Sheen",
+      "gender": "male",
+      "spouse": "Carol Sheen",
+      "children": [
+        "Patrick Sheen",
+        "Elizabeth (Libby) O'Neill",
+        "Martin Sheen",
+        "Andrew Sheen",
+        "Joanne Sheen"
+      ]
+    },
+    {
+      "name": "Patrick Sheen",
+      "marriages": [
+        {
+          "spouse": "Kathleen Wurth",
+          "divorced": true,
+          "children": ["Myf"]
+        },
+        {
+          "spouse": "Suzi Sheen",
+          "children": ["Rebecca", "[Son] (Suzi's child)"]
+        }
+      ]
+    },
+    {
+      "name": "Elizabeth (Libby) O'Neill",
+      "spouse": "Pat O'Neill",
+      "children": [
+        "Caroline Mackenzie",
+        "Colleen O'Neill",
+        "Phillip O'Neill"
+      ]
+    },
+    {
+      "name": "Caroline Mackenzie",
+      "spouse": "Alex Mackenzie",
+      "children": ["Edith Mackenzie", "Patrick Mackenzie"]
+    },
+    {
+      "name": "Martin Sheen",
+      "spouse": "Tracy Sheen",
+      "children": [
+        {
+          "name": "Anthony Sheen",
+          "spouse": "Daniel Moore",
+          "children": ["Brock"]
+        },
+        "Ben Sheen",
+        "Emma Sheen",
+        "Jordan Sheen"
+      ]
+    },
+    {
+      "name": "Andrew Sheen",
+      "spouse": "Dennis Karatu",
+      "divorced": true,
+      "children": ["Zanesha Sheen"]
+    },
+    {
+      "name": "Joanne Sheen",
+      "spouse": "Greg"
+    }
+  ]
+}
+
       "gender": "female"
     },
     {
