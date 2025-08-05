@@ -47,7 +47,8 @@ document.addEventListener("DOMContentLoaded", function () {
       g.attr("transform", event.transform);
     }));
 
-  const g = svg.append("g").attr("transform", `translate(${width / 2}, 100)`);
+  const g = svg.append("g")
+    .attr("transform", `translate(${width / 2}, 100)`);
 
   const treeData = {
     "name": "Carol Sheen (deceased)",
@@ -60,10 +61,10 @@ document.addEventListener("DOMContentLoaded", function () {
         "marriages": [
           {
             "spouse": "Kathleen (divorced)",
-            "divorced": true,
             "children": [
               { "name": "Myf (daughter, first marriage)" }
-            ]
+            ],
+            "divorced": true
           },
           {
             "spouse": "Suzi (current wife)",
@@ -118,10 +119,10 @@ document.addEventListener("DOMContentLoaded", function () {
         "marriages": [
           {
             "spouse": "Dennis (divorced)",
-            "divorced": true,
             "children": [
               { "name": "Zanesha" }
-            ]
+            ],
+            "divorced": true
           }
         ]
       },
@@ -129,69 +130,75 @@ document.addEventListener("DOMContentLoaded", function () {
         "name": "Joanne Sheen",
         "marriages": [
           {
-            "spouse": "Greg"
+            "spouse": "Greg",
+            "married": true
           }
         ]
       }
     ]
   };
 
-  function flattenTree(data) {
-    const clone = JSON.parse(JSON.stringify(data));
+  function buildTree(node) {
+    let children = [];
 
-    function expandMarriages(person) {
-      if (person.marriages) {
-        person.marriages.forEach(m => {
-          const spouseNode = {
-            name: m.spouse,
-            spouse: true,
-            _linkTo: person.name
-          };
-          if (!person.children) person.children = [];
-          person.children.push(spouseNode);
-
-          if (m.children) {
-            person.children = person.children.concat(m.children);
-          }
-        });
-      }
-
-      if (person.children) {
-        person.children.forEach(child => expandMarriages(child));
-      }
+    if (node.children) {
+      children = node.children.map(buildTree);
     }
 
-    expandMarriages(clone);
-    return clone;
+    if (node.marriages) {
+      node.marriages.forEach(m => {
+        const subTree = {
+          name: `${node.name} + ${m.spouse}`,
+          spouseLink: true,
+          children: m.children ? m.children.map(buildTree) : []
+        };
+        children.push(subTree);
+      });
+    }
+
+    return {
+      name: node.name,
+      children: children.length ? children : undefined
+    };
   }
 
-  const flatData = flattenTree(treeData);
-
-  const root = d3.hierarchy(flatData);
-
+  const hierarchicalData = d3.hierarchy(buildTree(treeData));
   const treeLayout = d3.tree().nodeSize([180, 120]);
-  treeLayout(root);
+  treeLayout(hierarchicalData);
 
   g.selectAll(".link")
-    .data(root.links())
+    .data(hierarchicalData.links())
     .enter().append("path")
     .attr("class", "link")
     .attr("d", d3.linkVertical()
       .x(d => d.x)
-      .y(d => d.y))
-    .attr("stroke", d => {
-      const isDivorced = (d.source.data.divorced || d.target.data.divorced);
-      return isDivorced ? "#999" : "#ccc";
-    })
-    .attr("stroke-dasharray", d => {
-      const isDivorced = (d.source.data.divorced || d.target.data.divorced);
-      return isDivorced ? "4 2" : null;
-    });
+      .y(d => d.y));
 
   const node = g.selectAll(".node")
-    .data(root.descendants())
+    .data(hierarchicalData.descendants())
     .enter().append("g")
-    .attr("class", d => d.data.spouse ? "node spouse" : "node")
+    .attr("class", "node")
     .attr("transform", d => `translate(${d.x},${d.y})`);
 
-  node.each(function (d)
+  node.each(function (d) {
+    const text = d.data.name;
+    const padding = 10;
+
+    const textElement = d3.select(this).append("text")
+      .text(text)
+      .attr("text-anchor", "middle")
+      .attr("dy", "0.35em");
+
+    const bbox = textElement.node().getBBox();
+    d3.select(this).insert("rect", "text")
+      .attr("x", -bbox.width / 2 - padding / 2)
+      .attr("y", -bbox.height / 2 - padding / 2)
+      .attr("width", bbox.width + padding)
+      .attr("height", bbox.height + padding)
+      .attr("rx", 6).attr("ry", 6);
+  });
+});
+</script>
+
+</body>
+</html>
