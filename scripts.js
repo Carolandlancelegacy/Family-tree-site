@@ -45,8 +45,9 @@ d3.json("tree.json").then(function(data) {
 
     if (node.marriages) {
       node.marriages.forEach(marriage => {
+        const label = `${node.name} + ${marriage.spouse}${marriage.divorced ? " (divorced)" : ""}`;
         const marriageNode = {
-          name: `${node.name} + ${marriage.spouse}${marriage.divorced ? " (divorced)" : ""}`,
+          name: label,
           _id: marriage._id,
           isMarriage: true,
           children: (marriage.children || []).map(buildHierarchy)
