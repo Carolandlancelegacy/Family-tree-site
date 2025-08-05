@@ -11,10 +11,11 @@ const svg = d3.select("svg")
 
 const svgGroup = svg.append("g");
 
-const treeLayout = d3.tree().nodeSize([160, 100]);
+const treeLayout = d3.tree().nodeSize([160, 120]);
 
 d3.json("tree.json").then(data => {
-  const root = d3.hierarchy(parseNode(data));
+  const parsed = buildTree(data);
+  const root = d3.hierarchy(parsed);
   treeLayout(root);
 
   svgGroup.selectAll("path.link")
@@ -23,12 +24,11 @@ d3.json("tree.json").then(data => {
     .append("path")
     .attr("class", "link")
     .attr("fill", "none")
-    .attr("stroke", "#ccc")
+    .attr("stroke", "#aaa")
     .attr("stroke-width", 2)
     .attr("d", d3.linkVertical()
       .x(d => d.x)
-      .y(d => d.y)
-    );
+      .y(d => d.y));
 
   const node = svgGroup.selectAll("g.node")
     .data(root.descendants())
@@ -53,33 +53,29 @@ d3.json("tree.json").then(data => {
     .text(d => d.data.name);
 });
 
-// Recursive parser
-function parseNode(person) {
-  const result = { name: person.name, children: [] };
+function buildTree(person) {
+  const node = { name: person.name, children: [] };
 
   if (person.marriages) {
     person.marriages.forEach(marriage => {
-      const spouseNode = { name: marriage.spouse, children: [] };
+      // Add the spouse node
+      const spouseNode = { name: marriage.spouse };
 
-      // Create a joint node representing the couple
-      const coupleNode = {
-        name: `${person.name} + ${marriage.spouse}`,
-        hidden: true,
+      // Virtual couple node for children
+      const couple = {
+        name: `${person.name} & ${marriage.spouse}`,
         children: []
       };
 
-      // Add children of the couple
+      // Recurse into children
       if (marriage.children) {
-        marriage.children.forEach(child => {
-          coupleNode.children.push(parseNode(child));
-        });
+        couple.children = marriage.children.map(buildTree);
       }
 
-      // Add spouse and couple as separate nodes
-      result.children.push(spouseNode);
-      result.children.push(coupleNode);
+      // Add spouse and couple node
+      node.children.push(spouseNode, couple);
     });
   }
 
-  return result;
+  return node;
 }
