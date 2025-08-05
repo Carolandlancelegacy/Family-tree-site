@@ -20,88 +20,84 @@ d3.json("tree.json").then(function(data) {
   const links = [];
   let idCounter = 0;
 
-  function createNode(name) {
-    const id = idCounter++;
-    nodes.push({ id, name });
-    return id;
-  }
+  function traverse(node, parent = null) {
+    const nodeId = idCounter++;
+    node._id = nodeId;
+    nodes.push({ id: nodeId, name: node.name });
 
-  function buildTree(person, parentId = null) {
-    const personId = createNode(person.name);
-
-    if (parentId !== null) {
-      links.push({ source: parentId, target: personId, dashed: false });
+    if (parent !== null) {
+      links.push({ source: parent._id, target: nodeId, dashed: false });
     }
 
-    if (person.marriages) {
-      person.marriages.forEach(marriage => {
-        const spouseId = createNode(marriage.spouse);
+    if (node.marriages) {
+      node.marriages.forEach(marriage => {
+        const spouseId = idCounter++;
+        nodes.push({ id: spouseId, name: marriage.spouse });
+
         links.push({
-          source: personId,
+          source: nodeId,
           target: spouseId,
           dashed: marriage.divorced || false
         });
 
         if (marriage.children) {
-          marriage.children.forEach(child => {
-            buildTree(child, personId);
-          });
+          marriage.children.forEach(child => traverse(child, { _id: spouseId }));
         }
       });
     }
 
-    if (person.children) {
-      person.children.forEach(child => {
-        buildTree(child, personId);
-      });
+    if (node.children) {
+      node.children.forEach(child => traverse(child, node));
     }
-
-    return personId;
   }
 
-  buildTree(data);
+  // Manually set the root node
+  const rootId = idCounter++;
+  data._id = rootId;
+  nodes.push({ id: rootId, name: data.name });
 
-  const treeData = d3.stratify()
-    .id(d => d.id)
-    .parentId(d => null)(nodes);
+  if (data.children) {
+    data.children.forEach(child => {
+      traverse(child, data);
+    });
+  }
 
-  const hierarchy = d3.hierarchy(data, d => {
-    const children = [];
+  const treeLayout = d3.tree().nodeSize([150, 100]);
+
+  const hierarchyData = d3.hierarchy(data, d => {
+    const kids = [];
 
     if (d.marriages) {
       d.marriages.forEach(m => {
-        if (m.children) {
-          children.push(...m.children);
-        }
+        if (m.children) kids.push(...m.children);
       });
     }
 
     if (d.children) {
-      children.push(...d.children);
+      kids.push(...d.children);
     }
 
-    return children;
+    return kids;
   });
 
-  const treeLayout = d3.tree().nodeSize([150, 100]);
-  treeLayout(hierarchy);
+  treeLayout(hierarchyData);
 
   const nodeMap = new Map();
-  hierarchy.descendants().forEach(d => {
-    nodeMap.set(d.data.name, d);
+  hierarchyData.descendants().forEach(d => {
+    nodeMap.set(d.data._id, d);
   });
 
   g.selectAll(".link")
     .data(links)
     .join("path")
     .attr("class", "link")
-    .attr("stroke-dasharray", d => d.dashed ? "4,2" : null)
+    .attr("stroke-dasharray", d => d.dashed ? "4,2" : "none")
+    .attr("fill", "none")
     .attr("stroke", "#999")
     .attr("stroke-width", 1.5)
-    .attr("fill", "none")
     .attr("d", d => {
-      const source = nodeMap.get(nodes[d.source].name);
-      const target = nodeMap.get(nodes[d.target].name);
+      const source = nodeMap.get(d.source);
+      const target = nodeMap.get(d.target);
       if (!source || !target) return;
       return d3.linkVertical()
         .x(d => d.x)
@@ -109,15 +105,16 @@ d3.json("tree.json").then(function(data) {
     });
 
   const node = g.selectAll(".node")
-    .data(hierarchy.descendants())
+    .data(hierarchyData.descendants())
     .join("g")
     .attr("class", "node")
     .attr("transform", d => `translate(${d.x},${d.y})`);
 
   node.each(function(d) {
+    const text = d.data.name;
     const padding = 10;
     const textElement = d3.select(this).append("text")
-      .text(d.data.name)
+      .text(text)
       .attr("text-anchor", "middle")
       .attr("dy", "0.35em");
 
