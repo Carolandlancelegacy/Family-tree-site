@@ -9,12 +9,64 @@ const svg = d3.select("body")
   .attr("transform", "translate(40,40)");
 
 d3.json("tree.json").then(function(data) {
-  const root = d3.hierarchy(data, d => d.children || []);
-
+  const root = d3.hierarchy(data, d => d.children?.filter(c => !c._isSpouse) || []);
   const treeLayout = d3.tree().nodeSize([120, 120]);
   treeLayout(root);
 
-  // Draw lines between parent and children
+  const spouseNodes = [];
+  const marriageLinks = [];
+  const allChildren = [];
+
+  function traverse(node) {
+    if (!node || !node.data) return;
+
+    const baseX = node.x;
+    const baseY = node.y;
+
+    const spouses = node.data.children?.filter(c => c._isSpouse) || [];
+
+    spouses.forEach((spouseData, i) => {
+      const spouseX = baseX + 100 + i * 100;
+      const spouseY = baseY;
+
+      spouseNodes.push({
+        name: spouseData.name,
+        x: spouseX,
+        y: spouseY
+      });
+
+      marriageLinks.push({
+        source: { x: baseX, y: baseY },
+        target: { x: spouseX, y: spouseY },
+        divorced: spouseData.name.toLowerCase().includes("divorc")
+      });
+
+      (spouseData.children || []).forEach((child, j) => {
+        const childX = baseX + (i * 60) + j * 60;
+        const childY = baseY + 120;
+
+        allChildren.push({
+          name: child.name,
+          x: childX,
+          y: childY
+        });
+
+        svg.append("path")
+          .attr("class", "link")
+          .attr("d", d3.linkVertical()
+            .x(() => spouseX)
+            .y(() => spouseY)
+            .target(() => ({ x: childX, y: childY }))
+          );
+      });
+    });
+
+    node.children?.forEach(traverse);
+  }
+
+  traverse(root);
+
+  // Draw tree links
   svg.selectAll(".link")
     .data(root.links())
     .enter()
@@ -25,7 +77,7 @@ d3.json("tree.json").then(function(data) {
       .y(d => d.y)
     );
 
-  // Draw nodes
+  // Draw main nodes
   const node = svg.selectAll(".node")
     .data(root.descendants())
     .enter()
@@ -45,69 +97,6 @@ d3.json("tree.json").then(function(data) {
     .attr("dy", 4)
     .attr("text-anchor", "middle")
     .text(d => d.data.name);
-
-  // Handle marriages
-  const marriageLinks = [];
-  const spouseNodes = [];
-
-  function processMarriages(node) {
-    if (node.data.marriages) {
-      node.data.marriages.forEach((m, i) => {
-        const spouseId = `${node.data.name}-spouse-${i}`;
-        spouseNodes.push({
-          name: m.spouse,
-          x: node.x + (i + 1) * 120,
-          y: node.y
-        });
-
-        // Connect main person to spouse
-        marriageLinks.push({
-          source: { x: node.x, y: node.y },
-          target: { x: node.x + (i + 1) * 120, y: node.y },
-          divorced: m.divorced
-        });
-
-        // Connect spouse to children
-        if (m.children) {
-          m.children.forEach((child, j) => {
-            const childX = node.x + (i + 1) * 60 + j * 50;
-            const childY = node.y + 120;
-            svg.append("path")
-              .attr("class", "link")
-              .attr("d", d3.linkVertical()
-                .x(() => node.x + (i + 1) * 120)
-                .y(() => node.y)
-                .target(() => ({ x: childX, y: childY }))
-              );
-
-            svg.append("g")
-              .attr("class", "node")
-              .attr("transform", `translate(${childX},${childY})`)
-              .call(g => {
-                g.append("rect")
-                  .attr("x", -50)
-                  .attr("y", -10)
-                  .attr("width", 100)
-                  .attr("height", 20)
-                  .attr("rx", 5)
-                  .attr("ry", 5);
-
-                g.append("text")
-                  .attr("dy", 4)
-                  .attr("text-anchor", "middle")
-                  .text(child.name);
-              });
-          });
-        }
-      });
-    }
-
-    if (node.children) {
-      node.children.forEach(processMarriages);
-    }
-  }
-
-  processMarriages(root);
 
   // Draw spouse nodes
   svg.selectAll(".spouse-node")
@@ -141,4 +130,26 @@ d3.json("tree.json").then(function(data) {
     .attr("y1", d => d.source.y)
     .attr("x2", d => d.target.x)
     .attr("y2", d => d.target.y);
+
+  // Draw children of spouses
+  svg.selectAll(".child-node")
+    .data(allChildren)
+    .enter()
+    .append("g")
+    .attr("class", "child-node")
+    .attr("transform", d => `translate(${d.x},${d.y})`)
+    .call(g => {
+      g.append("rect")
+        .attr("x", -50)
+        .attr("y", -10)
+        .attr("width", 100)
+        .attr("height", 20)
+        .attr("rx", 5)
+        .attr("ry", 5);
+
+      g.append("text")
+        .attr("dy", 4)
+        .attr("text-anchor", "middle")
+        .text(d => d.name);
+    });
 });
