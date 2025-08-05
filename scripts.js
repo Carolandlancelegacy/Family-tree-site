@@ -1,125 +1,144 @@
 const width = window.innerWidth;
 const height = window.innerHeight;
 
-const svg = d3.select("body").append("svg")
+const svg = d3.select("body")
+  .append("svg")
   .attr("width", width)
   .attr("height", height)
-  .call(
-    d3.zoom()
-      .scaleExtent([0.25, 2])
-      .on("zoom", (event) => {
-        g.attr("transform", event.transform);
-      })
-  );
-
-const g = svg.append("g")
-  .attr("transform", `translate(${width / 2}, 100)`);
+  .append("g")
+  .attr("transform", "translate(40,40)");
 
 d3.json("tree.json").then(function(data) {
-  const nodes = [];
-  const links = [];
-  let idCounter = 0;
+  const root = d3.hierarchy(data, d => d.children || []);
 
-  function traverse(node, parent = null) {
-    const nodeId = idCounter++;
-    node._id = nodeId;
-    nodes.push({ id: nodeId, name: node.name });
+  const treeLayout = d3.tree().nodeSize([120, 120]);
+  treeLayout(root);
 
-    if (parent !== null) {
-      links.push({ source: parent._id, target: nodeId, dashed: false });
-    }
+  // Draw lines between parent and children
+  svg.selectAll(".link")
+    .data(root.links())
+    .enter()
+    .append("path")
+    .attr("class", "link")
+    .attr("d", d3.linkVertical()
+      .x(d => d.x)
+      .y(d => d.y)
+    );
 
-    if (node.marriages) {
-      node.marriages.forEach(marriage => {
-        const spouseId = idCounter++;
-        const spouseNode = { id: spouseId, name: marriage.spouse };
-        nodes.push(spouseNode);
+  // Draw nodes
+  const node = svg.selectAll(".node")
+    .data(root.descendants())
+    .enter()
+    .append("g")
+    .attr("class", "node")
+    .attr("transform", d => `translate(${d.x},${d.y})`);
 
-        links.push({
-          source: nodeId,
-          target: spouseId,
-          dashed: marriage.divorced || false
+  node.append("rect")
+    .attr("x", -50)
+    .attr("y", -10)
+    .attr("width", 100)
+    .attr("height", 20)
+    .attr("rx", 5)
+    .attr("ry", 5);
+
+  node.append("text")
+    .attr("dy", 4)
+    .attr("text-anchor", "middle")
+    .text(d => d.data.name);
+
+  // Handle marriages
+  const marriageLinks = [];
+  const spouseNodes = [];
+
+  function processMarriages(node) {
+    if (node.data.marriages) {
+      node.data.marriages.forEach((m, i) => {
+        const spouseId = `${node.data.name}-spouse-${i}`;
+        spouseNodes.push({
+          name: m.spouse,
+          x: node.x + (i + 1) * 120,
+          y: node.y
         });
 
-        if (marriage.children) {
-          marriage.children.forEach(child => traverse(child, spouseNode));
+        // Connect main person to spouse
+        marriageLinks.push({
+          source: { x: node.x, y: node.y },
+          target: { x: node.x + (i + 1) * 120, y: node.y },
+          divorced: m.divorced
+        });
+
+        // Connect spouse to children
+        if (m.children) {
+          m.children.forEach((child, j) => {
+            const childX = node.x + (i + 1) * 60 + j * 50;
+            const childY = node.y + 120;
+            svg.append("path")
+              .attr("class", "link")
+              .attr("d", d3.linkVertical()
+                .x(() => node.x + (i + 1) * 120)
+                .y(() => node.y)
+                .target(() => ({ x: childX, y: childY }))
+              );
+
+            svg.append("g")
+              .attr("class", "node")
+              .attr("transform", `translate(${childX},${childY})`)
+              .call(g => {
+                g.append("rect")
+                  .attr("x", -50)
+                  .attr("y", -10)
+                  .attr("width", 100)
+                  .attr("height", 20)
+                  .attr("rx", 5)
+                  .attr("ry", 5);
+
+                g.append("text")
+                  .attr("dy", 4)
+                  .attr("text-anchor", "middle")
+                  .text(child.name);
+              });
+          });
         }
       });
     }
 
     if (node.children) {
-      node.children.forEach(child => traverse(child, node));
+      node.children.forEach(processMarriages);
     }
   }
 
-  traverse(data);
+  processMarriages(root);
 
-  const treeLayout = d3.tree().nodeSize([150, 100]);
+  // Draw spouse nodes
+  svg.selectAll(".spouse-node")
+    .data(spouseNodes)
+    .enter()
+    .append("g")
+    .attr("class", "spouse-node")
+    .attr("transform", d => `translate(${d.x},${d.y})`)
+    .call(g => {
+      g.append("rect")
+        .attr("x", -50)
+        .attr("y", -10)
+        .attr("width", 100)
+        .attr("height", 20)
+        .attr("rx", 5)
+        .attr("ry", 5);
 
-  const hierarchyData = d3.hierarchy(data, d => {
-    const kids = [];
-
-    if (d.marriages) {
-      d.marriages.forEach(m => {
-        if (m.children) kids.push(...m.children);
-      });
-    }
-
-    if (d.children) {
-      kids.push(...d.children);
-    }
-
-    return kids;
-  });
-
-  treeLayout(hierarchyData);
-
-  const nodeMap = new Map();
-  hierarchyData.descendants().forEach(d => {
-    nodeMap.set(d.data._id, d);
-  });
-
-  g.selectAll(".link")
-    .data(links)
-    .join("path")
-    .attr("class", "link")
-    .attr("stroke-dasharray", d => d.dashed ? "4,2" : "none")
-    .attr("fill", "none")
-    .attr("stroke", "#999")
-    .attr("stroke-width", 1.5)
-    .attr("d", d => {
-      const source = nodeMap.get(d.source);
-      const target = nodeMap.get(d.target);
-      if (!source || !target) return;
-      return d3.linkVertical()
-        .x(d => d.x)
-        .y(d => d.y)({ source, target });
+      g.append("text")
+        .attr("dy", 4)
+        .attr("text-anchor", "middle")
+        .text(d => d.name);
     });
 
-  const node = g.selectAll(".node")
-    .data(hierarchyData.descendants())
-    .join("g")
-    .attr("class", "node")
-    .attr("transform", d => `translate(${d.x},${d.y})`);
-
-  node.each(function(d) {
-    const text = d.data.name;
-    const padding = 10;
-    const textElement = d3.select(this).append("text")
-      .text(text)
-      .attr("text-anchor", "middle")
-      .attr("dy", "0.35em");
-
-    const bbox = textElement.node().getBBox();
-    d3.select(this).insert("rect", "text")
-      .attr("x", -bbox.width / 2 - padding / 2)
-      .attr("y", -bbox.height / 2 - padding / 2)
-      .attr("width", bbox.width + padding)
-      .attr("height", bbox.height + padding)
-      .attr("rx", 4)
-      .attr("ry", 4)
-      .attr("fill", "white")
-      .attr("stroke", "#333")
-      .attr("stroke-width", 1.5);
-  });
+  // Draw marriage lines
+  svg.selectAll(".marriage-link")
+    .data(marriageLinks)
+    .enter()
+    .append("line")
+    .attr("class", d => d.divorced ? "link divorced" : "link")
+    .attr("x1", d => d.source.x)
+    .attr("y1", d => d.source.y)
+    .attr("x2", d => d.target.x)
+    .attr("y2", d => d.target.y);
 });
