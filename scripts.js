@@ -1,4 +1,3 @@
-// Family Tree Script
 const width = window.innerWidth;
 const height = window.innerHeight;
 
@@ -12,24 +11,25 @@ const svg = d3.select("svg")
 
 const svgGroup = svg.append("g");
 
-const treeLayout = d3.tree().nodeSize([150, 120]);
+const treeLayout = d3.tree().nodeSize([160, 100]);
 
 d3.json("tree.json").then(data => {
-  const root = d3.hierarchy(transformData(data));
+  const root = d3.hierarchy(parseNode(data));
   treeLayout(root);
 
-  // Render links
   svgGroup.selectAll("path.link")
     .data(root.links())
     .enter()
     .append("path")
     .attr("class", "link")
+    .attr("fill", "none")
+    .attr("stroke", "#ccc")
+    .attr("stroke-width", 2)
     .attr("d", d3.linkVertical()
       .x(d => d.x)
       .y(d => d.y)
     );
 
-  // Render nodes
   const node = svgGroup.selectAll("g.node")
     .data(root.descendants())
     .enter()
@@ -38,12 +38,14 @@ d3.json("tree.json").then(data => {
     .attr("transform", d => `translate(${d.x},${d.y})`);
 
   node.append("rect")
-    .attr("width", 150)
+    .attr("width", 160)
     .attr("height", 30)
-    .attr("x", -75)
+    .attr("x", -80)
     .attr("y", -15)
     .attr("rx", 8)
-    .attr("ry", 8);
+    .attr("ry", 8)
+    .attr("fill", "#fff")
+    .attr("stroke", "#333");
 
   node.append("text")
     .attr("dy", 5)
@@ -51,29 +53,33 @@ d3.json("tree.json").then(data => {
     .text(d => d.data.name);
 });
 
-// Helper: Transform JSON for hierarchy
-function transformData(person) {
-  const children = [];
+// Recursive parser
+function parseNode(person) {
+  const result = { name: person.name, children: [] };
 
   if (person.marriages) {
     person.marriages.forEach(marriage => {
-      // Add spouse node
-      children.push({
-        name: marriage.spouse,
-        isSpouse: true
-      });
+      const spouseNode = { name: marriage.spouse, children: [] };
 
-      // Add children of this marriage
+      // Create a joint node representing the couple
+      const coupleNode = {
+        name: `${person.name} + ${marriage.spouse}`,
+        hidden: true,
+        children: []
+      };
+
+      // Add children of the couple
       if (marriage.children) {
         marriage.children.forEach(child => {
-          children.push(transformData(child));
+          coupleNode.children.push(parseNode(child));
         });
       }
+
+      // Add spouse and couple as separate nodes
+      result.children.push(spouseNode);
+      result.children.push(coupleNode);
     });
   }
 
-  return {
-    name: person.name,
-    children: children
-  };
+  return result;
 }
