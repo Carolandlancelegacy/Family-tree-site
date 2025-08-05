@@ -6,8 +6,7 @@ const svg = d3.select("svg")
   .attr("height", height)
   .call(d3.zoom().on("zoom", function (event) {
     svgGroup.attr("transform", event.transform);
-  }))
-  .append("g");
+  }));
 
 const svgGroup = svg.append("g");
 
@@ -18,18 +17,25 @@ d3.json("tree.json").then(data => {
   const root = d3.hierarchy(parsed);
   treeLayout(root);
 
+  // Draw links
   svgGroup.selectAll("path.link")
     .data(root.links())
     .enter()
     .append("path")
     .attr("class", "link")
     .attr("fill", "none")
-    .attr("stroke", "#aaa")
+    .attr("stroke", d => {
+      return d.target.data.isDivorced ? "#999" : "#aaa";
+    })
+    .attr("stroke-dasharray", d => {
+      return d.target.data.isDivorced ? "4,2" : "0";
+    })
     .attr("stroke-width", 2)
     .attr("d", d3.linkVertical()
       .x(d => d.x)
       .y(d => d.y));
 
+  // Draw nodes
   const node = svgGroup.selectAll("g.node")
     .data(root.descendants())
     .enter()
@@ -58,10 +64,9 @@ function buildRoot(person) {
 
   if (person.marriages) {
     person.marriages.forEach(marriage => {
-      const spouseNode = { name: marriage.spouse };
-
       const couple = {
-        name: `${person.name} & ${marriage.spouse}`,
+        name: `${person.name} + ${marriage.spouse}`,
+        isDivorced: marriage.divorced || false,
         children: []
       };
 
@@ -69,7 +74,7 @@ function buildRoot(person) {
         couple.children = marriage.children.map(buildTree);
       }
 
-      node.children.push(spouseNode, couple);
+      node.children.push(couple);
     });
   }
 
@@ -81,10 +86,9 @@ function buildTree(person) {
 
   if (person.marriages) {
     person.marriages.forEach(marriage => {
-      const spouseNode = { name: marriage.spouse };
-
       const couple = {
-        name: `${person.name} & ${marriage.spouse}`,
+        name: `${person.name} + ${marriage.spouse}`,
+        isDivorced: marriage.divorced || false,
         children: []
       };
 
@@ -92,7 +96,7 @@ function buildTree(person) {
         couple.children = marriage.children.map(buildTree);
       }
 
-      node.children.push(spouseNode, couple);
+      node.children.push(couple);
     });
   }
 
