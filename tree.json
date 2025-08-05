@@ -1,1 +1,24 @@
-{ "name": "Nan & Pop", "children": [] }
+{
+  "name": "Nan & Pop",
+  "children": [
+    {
+      "name": "Uncle Bob",
+      "children": [
+        { "name": "Cousin Jake", "children": [] },
+        { "name": "Cousin Lily", "children": [] }
+      ]
+    },
+    {
+      "name": "Aunt Sue",
+      "children": [
+        { "name": "Cousin Max", "children": [] }
+      ]
+    },
+    {
+      "name": "Dad",
+      "children": [
+        { "name": "You", "children": [] }
+      ]
+    }
+  ]
+}
