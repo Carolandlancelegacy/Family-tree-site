@@ -3,22 +3,24 @@ body { font-family: sans-serif; text-align: center; padding: 2em; background: #f
 input, button { margin-top: 10px; padding: 10px; width: 100%; }
 ul {
   list-style-type: none;
-  padding-left: 1em;
-  border-left: 1px solid #ccc;
+  padding-left: 2em; /* More indentation */
+  border-left: 2px solid #999;
   margin-left: 1em;
 }
 
 li {
   margin: 0.5em 0;
+  padding-left: 1em; /* Additional spacing inside node */
   position: relative;
 }
 
 li::before {
   content: '';
   position: absolute;
-  top: 0.7em;
+  top: 0.75em;
   left: -1em;
   width: 1em;
   height: 0;
-  border-top: 1px solid #ccc;
+  border-top: 1px solid #999;
 }
+
