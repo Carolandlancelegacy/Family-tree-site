@@ -140,7 +140,6 @@ function buildRoot(person) {
   }
 
   return node;
-    return node;
 }
 
 // <- this might be missing
