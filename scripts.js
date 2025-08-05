@@ -51,8 +51,8 @@ defs.append("pattern")
   .attr("height", 1)
   node.append("image")
   .attr("xlink:href", "leaf-removebg-preview.png")  // your leaf image file
-  .attr("x", -25)  // shift to centre
-  .attr("y", -25)
+  .attr("x", -15)  // shift to centre
+  .attr("y", -15)
   .attr("width", 100)  // increase size here (try 120 if needed)
   .attr("height", 100)
   .attr("preserveAspectRatio", "xMidYMid slice");
