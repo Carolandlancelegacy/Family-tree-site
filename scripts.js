@@ -26,7 +26,7 @@ d3.json("tree.json").then(data => {
     })
     .attr("fill", "none")
     .attr("stroke", "#ccc")
-    .attr("stroke-width", 5)
+    .attr("stroke-width", 10)
     .attr("d", d3.linkVertical()
       .x(d => d.x)
       .y(d => d.y));
