@@ -25,7 +25,7 @@ d3.json("tree.json").then(data => {
       return "link" + (d.target.data.divorced ? " divorced" : "");
     })
     .attr("fill", "none")
-    .attr("stroke", "#013220")
+    .attr("stroke", "#ccc")
     .attr("stroke-width", 2)
     .attr("d", d3.linkVertical()
       .x(d => d.x)
@@ -51,8 +51,8 @@ defs.append("pattern")
   .attr("height", 1)
   node.append("image")
   .attr("xlink:href", "leaf-removebg-preview.png")  // your leaf image file
-  .attr("x", -25)  // shift to centre
-  .attr("y", -25)
+  .attr("x", -50)  // shift to centre
+  .attr("y", -50)
   .attr("width", 100)  // increase size here (try 120 if needed)
   .attr("height", 100)
   .attr("preserveAspectRatio", "xMidYMid slice");
