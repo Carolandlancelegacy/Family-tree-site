@@ -17,7 +17,7 @@
             {
               "spouse": "Suzi Sheen",
               "children": [
-                { "name": "Rebecca (stepdaughter, Suzi's child)" },
+                { "name": "Rebecca " },
                 { "name": "[Son] (Suzi's child)" }
               ]
             }
@@ -78,7 +78,7 @@
               "spouse": "Dennis Karatu",
               "divorced": true,
               "children": [
-                { "name": "Zanesha" }
+                { "name": "Zanesha Sheen" }
               ]
             }
           ]
