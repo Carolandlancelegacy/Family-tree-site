@@ -25,7 +25,9 @@ d3.json("tree.json").then(data => {
       return "link" + (d.target.data.divorced ? " divorced" : "");
     })
     .attr("fill", "none")
-    .attr("stroke", "#ccc")
+    .attr("stroke", "##013220")
+    .attr("stroke-linecap", "round")
+    .attr("stroke-opacity", 0.8)
     .attr("stroke-width", 20)
     .attr("d", d3.linkVertical()
       .x(d => d.x)
