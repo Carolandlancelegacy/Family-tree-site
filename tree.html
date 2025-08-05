@@ -10,195 +10,36 @@
       overflow: hidden;
       background: #fdfaf6;
     }
+
     .node rect {
       fill: white;
       stroke: #333;
       stroke-width: 1.5px;
-      rx: 6;
-      ry: 6;
+      rx: 4;
+      ry: 4;
     }
-    .node.spouse rect {
-      fill: #f8f8f8;
-      stroke: #999;
-    }
+
     .node text {
       font-size: 12px;
       pointer-events: none;
     }
+
     .link {
       fill: none;
       stroke: #ccc;
       stroke-width: 1.5px;
+    }
+
+    .link.divorced {
+      stroke-dasharray: 4;
+      stroke: #999;
     }
   </style>
 </head>
 <body>
 
 <script src="https://d3js.org/d3.v7.min.js"></script>
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-  const width = window.innerWidth;
-  const height = window.innerHeight;
-
-  const svg = d3.select("body").append("svg")
-    .attr("width", width)
-    .attr("height", height)
-    .call(d3.zoom().on("zoom", (event) => {
-      g.attr("transform", event.transform);
-    }));
-
-  const g = svg.append("g")
-    .attr("transform", `translate(${width / 2}, 100)`);
-
-  const treeData = {
-    "name": "Carol Sheen (deceased)",
-    "marriages": [
-      { "spouse": "Lance" }
-    ],
-    "children": [
-      {
-        "name": "Patrick Sheen",
-        "marriages": [
-          {
-            "spouse": "Kathleen (divorced)",
-            "children": [
-              { "name": "Myf (daughter, first marriage)" }
-            ],
-            "divorced": true
-          },
-          {
-            "spouse": "Suzi (current wife)",
-            "children": [
-              { "name": "Rebecca (stepdaughter, Suzi's child)" },
-              { "name": "[Son] (Suzi's child)" }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "Elizabeth (Libby) O'Neill",
-        "widowed": true,
-        "marriages": [
-          {
-            "spouse": "Pat (deceased)",
-            "children": [
-              {
-                "name": "Caroline (married to Alex)",
-                "marriages": [
-                  {
-                    "spouse": "Alex",
-                    "children": [
-                      { "name": "Edith" },
-                      { "name": "Patrick" }
-                    ]
-                  }
-                ]
-              },
-              { "name": "Colleen" },
-              { "name": "Phillip" }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "Martin Sheen",
-        "marriages": [
-          {
-            "spouse": "Tracy",
-            "children": [
-              { "name": "Anthony (oldest brother)" },
-              { "name": "Ben (You)" },
-              { "name": "Emma (sister, deceased)" },
-              { "name": "Jordan (youngest sister)" }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "Andrew Sheen",
-        "marriages": [
-          {
-            "spouse": "Dennis (divorced)",
-            "children": [
-              { "name": "Zanesha" }
-            ],
-            "divorced": true
-          }
-        ]
-      },
-      {
-        "name": "Joanne Sheen",
-        "marriages": [
-          {
-            "spouse": "Greg",
-            "married": true
-          }
-        ]
-      }
-    ]
-  };
-
-  function buildTree(node) {
-    let children = [];
-
-    if (node.children) {
-      children = node.children.map(buildTree);
-    }
-
-    if (node.marriages) {
-      node.marriages.forEach(m => {
-        const subTree = {
-          name: `${node.name} + ${m.spouse}`,
-          spouseLink: true,
-          children: m.children ? m.children.map(buildTree) : []
-        };
-        children.push(subTree);
-      });
-    }
-
-    return {
-      name: node.name,
-      children: children.length ? children : undefined
-    };
-  }
-
-  const hierarchicalData = d3.hierarchy(buildTree(treeData));
-  const treeLayout = d3.tree().nodeSize([180, 120]);
-  treeLayout(hierarchicalData);
-
-  g.selectAll(".link")
-    .data(hierarchicalData.links())
-    .enter().append("path")
-    .attr("class", "link")
-    .attr("d", d3.linkVertical()
-      .x(d => d.x)
-      .y(d => d.y));
-
-  const node = g.selectAll(".node")
-    .data(hierarchicalData.descendants())
-    .enter().append("g")
-    .attr("class", "node")
-    .attr("transform", d => `translate(${d.x},${d.y})`);
-
-  node.each(function (d) {
-    const text = d.data.name;
-    const padding = 10;
-
-    const textElement = d3.select(this).append("text")
-      .text(text)
-      .attr("text-anchor", "middle")
-      .attr("dy", "0.35em");
-
-    const bbox = textElement.node().getBBox();
-    d3.select(this).insert("rect", "text")
-      .attr("x", -bbox.width / 2 - padding / 2)
-      .attr("y", -bbox.height / 2 - padding / 2)
-      .attr("width", bbox.width + padding)
-      .attr("height", bbox.height + padding)
-      .attr("rx", 6).attr("ry", 6);
-  });
-});
-</script>
+<script src="script.js"></script>
 
 </body>
 </html>
