@@ -30,6 +30,17 @@ d3.json("tree.json").then(data => {
     .attr("d", d3.linkVertical()
       .x(d => d.x)
       .y(d => d.y));
+  /* Path lines between nodes */
+path {
+  filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.4));
+  transition: transform 0.2s ease;
+}
+
+/* On hover, slightly enlarge the connecting path */
+.node:hover path {
+  transform: scale(1.05);
+}
+
 
   // Draw nodes
   const node = svgGroup.selectAll(".node")
@@ -39,20 +50,21 @@ d3.json("tree.json").then(data => {
     .attr("class", "node")
     .attr("transform", d => `translate(${d.x},${d.y})`);
 
-  node.append("rect")
-    .attr("width", 160)
-    .attr("height", 30)
-    .attr("x", -80)
-    .attr("y", -15)
-    .attr("rx", 8)
-    .attr("ry", 8)
-    .attr("fill", "#fff")
-    .attr("stroke", "#333");
+ const leafPath = "M0,-40 C40,-40 40,40 0,40 C-40,40 -40,-40 0,-40 Z";
+
+node.append("path")
+  .attr("d", leafPath)
+  .attr("fill", "#228B22") // forest green
+  .attr("stroke", "#145214") // darker green outline
+  .attr("stroke-width", 2);
+
 
   node.append("text")
-    .attr("dy", 5)
-    .attr("text-anchor", "middle")
-    .text(d => d.data.name);
+  .attr("dy", 5)
+  .attr("text-anchor", "middle")
+  .attr("fill", "#fff") // white text on green leaf
+  .text(d => d.data.name);
+
 });
 
 function buildRoot(person) {
