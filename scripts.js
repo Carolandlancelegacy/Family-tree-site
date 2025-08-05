@@ -41,13 +41,29 @@ d3.json("tree.json").then(data => {
     .attr("class", "node")
     .attr("transform", d => `translate(${d.x},${d.y})`);
 
- const leafPath = "M0,-40 C40,-40 40,40 0,40 C-40,40 -40,-40 0,-40 Z";
+// Add the pattern definition once
+const defs = svg.append("defs");
+
+defs.append("pattern")
+  .attr("id", "leafPattern")
+  .attr("patternUnits", "objectBoundingBox")
+  .attr("width", 1)
+  .attr("height", 1)
+  .append("image")
+  .attr("href", "leaf-removebg-preview.png") // or your full hosted GitHub path
+  .attr("width", 80)
+  .attr("height", 80)
+  .attr("x", 0)
+  .attr("y", 0);
+
+const leafPath = "M0,-40 C40,-40 40,40 0,40 C-40,40 -40,-40 0,-40 Z";
 
 node.append("path")
   .attr("d", leafPath)
-  .attr("fill", "#228B22") // forest green
-  .attr("stroke", "#145214") // darker green outline
+  .attr("fill", "url(#leafPattern)")
+  .attr("stroke", "#145214")
   .attr("stroke-width", 2);
+
 
 
   node.append("text")
