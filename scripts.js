@@ -1,51 +1,131 @@
-document.addEventListener("DOMContentLoaded", function () {
-  const correctPassword = "cllegacy";
+// script.js
+const width = window.innerWidth;
+const height = window.innerHeight;
 
-  const overlay = document.createElement("div");
-  overlay.style.position = "fixed";
-  overlay.style.top = 0;
-  overlay.style.left = 0;
-  overlay.style.width = "100%";
-  overlay.style.height = "100%";
-  overlay.style.backgroundColor = "#fdfaf6";
-  overlay.style.zIndex = 9999;
-  overlay.style.display = "flex";
-  overlay.style.flexDirection = "column";
-  overlay.style.alignItems = "center";
-  overlay.style.justifyContent = "center";
+const svg = d3.select("body").append("svg")
+  .attr("width", width)
+  .attr("height", height)
+  .call(
+    d3.zoom()
+      .scaleExtent([0.25, 2])
+      .on("zoom", (event) => {
+        g.attr("transform", event.transform);
+      })
+  );
 
-  const label = document.createElement("label");
-  label.textContent = "Enter Password";
-  label.style.marginBottom = "10px";
+const g = svg.append("g")
+  .attr("transform", `translate(${width / 2}, 100)`);
 
-  const input = document.createElement("input");
-  input.type = "password";
-  input.style.padding = "8px";
-  input.style.fontSize = "16px";
-  input.style.border = "1px solid #ccc";
+d3.json("tree.json").then(function(data) {
+  const nodes = [];
+  const links = [];
 
-  const button = document.createElement("button");
-  button.textContent = "Submit";
-  button.style.marginTop = "10px";
-  button.style.padding = "8px 16px";
-  button.style.fontSize = "16px";
+  let idCounter = 0;
 
-  const error = document.createElement("div");
-  error.style.color = "red";
-  error.style.marginTop = "8px";
-  error.style.fontSize = "14px";
+  function traverse(node, parent = null) {
+    const nodeId = idCounter++;
+    node._id = nodeId;
+    nodes.push({ id: nodeId, name: node.name });
 
-  button.onclick = () => {
-    if (input.value === correctPassword) {
-      overlay.remove();
-    } else {
-      error.textContent = "Incorrect password. Try again.";
+    if (parent !== null) {
+      links.push({ source: parent._id, target: nodeId, dashed: false });
     }
-  };
 
-  overlay.appendChild(label);
-  overlay.appendChild(input);
-  overlay.appendChild(button);
-  overlay.appendChild(error);
-  document.body.appendChild(overlay);
+    if (node.marriages) {
+      node.marriages.forEach(marriage => {
+        const spouseId = idCounter++;
+        const spouseLabel = `${marriage.spouse}`;
+        nodes.push({ id: spouseId, name: spouseLabel });
+
+        links.push({
+          source: nodeId,
+          target: spouseId,
+          dashed: marriage.divorced || false
+        });
+
+        if (marriage.children) {
+          marriage.children.forEach(child => traverse(child, { _id: spouseId }));
+        }
+      });
+    }
+
+    if (node.children) {
+      node.children.forEach(child => traverse(child, node));
+    }
+  }
+
+  traverse(data);
+
+  const root = d3.stratify()
+    .id(d => d.id)
+    .parentId(d => null)(nodes);
+
+  const treeLayout = d3.tree().nodeSize([150, 100]);
+
+  const hierarchyData = d3.hierarchy(data, d => {
+    const merged = [];
+
+    if (d.marriages) {
+      d.marriages.forEach(m => {
+        if (m.children) merged.push(...m.children);
+      });
+    }
+
+    if (d.children) {
+      merged.push(...d.children);
+    }
+
+    return merged;
+  });
+
+  treeLayout(hierarchyData);
+
+  const nodeMap = new Map();
+  hierarchyData.descendants().forEach(d => {
+    nodeMap.set(d.data._id, d);
+  });
+
+  g.selectAll(".link")
+    .data(links)
+    .join("path")
+    .attr("class", "link")
+    .attr("stroke-dasharray", d => d.dashed ? "4,2" : "none")
+    .attr("fill", "none")
+    .attr("stroke", "#999")
+    .attr("stroke-width", 1.5)
+    .attr("d", d => {
+      const source = nodeMap.get(d.source);
+      const target = nodeMap.get(d.target);
+      if (!source || !target) return;
+      return d3.linkVertical()
+        .x(d => d.x)
+        .y(d => d.y)({ source, target });
+    });
+
+  const node = g.selectAll(".node")
+    .data(hierarchyData.descendants())
+    .join("g")
+    .attr("class", "node")
+    .attr("transform", d => `translate(${d.x},${d.y})`);
+
+  node.each(function(d) {
+    const text = d.data.name;
+    const padding = 10;
+    const textElement = d3.select(this).append("text")
+      .text(text)
+      .attr("text-anchor", "middle")
+      .attr("dy", "0.35em");
+
+    const bbox = textElement.node().getBBox();
+    d3.select(this).insert("rect", "text")
+      .attr("x", -bbox.width / 2 - padding / 2)
+      .attr("y", -bbox.height / 2 - padding / 2)
+      .attr("width", bbox.width + padding)
+      .attr("height", bbox.height + padding)
+      .attr("rx", 4)
+      .attr("ry", 4)
+      .attr("fill", "white")
+      .attr("stroke", "#333")
+      .attr("stroke-width", 1.5);
+  });
 });
