@@ -1,78 +1,99 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Family Tree</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>Family Tree Viewer</title>
   <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #fdfbf7;
+      font-family: Arial, sans-serif;
+    }
+
+    h1, p {
+      text-align: center;
+      margin-top: 1rem;
+    }
+
+    svg {
+      width: 100vw;
+      height: 100vh;
+      overflow: visible;
+    }
+
+    .node rect {
+      fill: #fdfbf7;
+      stroke: #333;
+      stroke-width: 1.5px;
+      rx: 10;
+      ry: 10;
+    }
+
+    .node text {
+      font: 14px sans-serif;
+      text-anchor: middle;
+      dominant-baseline: middle;
+      fill: #333;
+    }
+
+    .link {
+      fill: none;
+      stroke: #aaa;
+      stroke-width: 1.5px;
+    }
+  </style>
 </head>
 <body>
   <h1>Family Tree Viewer</h1>
-  <p id="placeholder">This is where your visual tree will appear.</p>
+  <p>This is where your visual tree will appear.</p>
+  <svg></svg>
 
   <script>
-    fetch('tree.json')
-      .then(response => response.json())
-      .then(data => {
-        const dx = 200;  // more vertical space between nodes
-        const dy = 220;  // wider spacing horizontally
+    const dx = 180;  // vertical spacing
+    const dy = 250;  // horizontal spacing
 
-        const width = 1000;
+    const tree = d3.tree().nodeSize([dx, dy]);
 
-        const tree = d3.tree().nodeSize([dx, dy]);
+    const diagonal = d3.linkVertical()
+      .x(d => d.x)
+      .y(d => d.y);
 
-        const diagonal = d3.linkHorizontal()
-          .x(d => d.y)
-          .y(d => d.x);
+    const svg = d3.select("svg");
+    const g = svg.append("g")
+      .attr("transform", "translate(600,100)");
 
-        const root = d3.hierarchy(data);
-        root.x0 = 0;
-        root.y0 = 0;
-        tree(root);
+    d3.json("tree.json").then(data => {
+      const root = d3.hierarchy(data);
+      tree(root);
 
-        const svg = d3.select("body").append("svg")
-          .attr("width", width)
-          .attr("height", root.height * dx + 400)
-          .attr("viewBox", [-dy / 3, -dx, width, 1000])
-          .style("font", "14px sans-serif")
-          .style("user-select", "none");
+      // Draw links
+      g.selectAll(".link")
+        .data(root.links())
+        .join("path")
+        .attr("class", "link")
+        .attr("d", diagonal);
 
-        const g = svg.append("g")
-          .attr("transform", `translate(${dy / 3},${dx})`);
+      // Draw nodes
+      const node = g.selectAll(".node")
+        .data(root.descendants())
+        .join("g")
+        .attr("class", "node")
+        .attr("transform", d => `translate(${d.x},${d.y})`);
 
-        const link = g.append("g")
-          .attr("fill", "none")
-          .attr("stroke", "#555")
-          .attr("stroke-opacity", 0.6)
-          .attr("stroke-width", 1.5)
-          .selectAll("path")
-          .data(root.links())
-          .join("path")
-          .attr("d", diagonal);
+      node.append("rect")
+        .attr("x", -80)
+        .attr("y", -20)
+        .attr("width", 160)
+        .attr("height", 40)
+        .attr("rx", 12)
+        .attr("ry", 12);
 
-        const node = g.append("g")
-          .attr("stroke-linejoin", "round")
-          .attr("stroke-width", 3)
-          .selectAll("g")
-          .data(root.descendants())
-          .join("g")
-          .attr("transform", d => `translate(${d.y},${d.x})`);
-
-        node.append("rect")
-          .attr("fill", d => d.children ? "#555" : "#999")
-          .attr("rx", 6)
-          .attr("ry", 6)
-          .attr("x", -60)
-          .attr("y", -15)
-          .attr("width", 120)
-          .attr("height", 30);
-
-        node.append("text")
-          .attr("dy", "0.31em")
-          .attr("x", 0)
-          .attr("text-anchor", "middle")
-          .attr("fill", "white")
-          .text(d => d.data.name);
-      });
+      node.append("text")
+        .attr("dy", "0.35em")
+        .text(d => d.data.name);
+    });
   </script>
 </body>
 </html>
