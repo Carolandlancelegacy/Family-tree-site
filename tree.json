@@ -1,23 +1,25 @@
 {
-  "name": "Carol Sheen",
+  "name": "Root",
   "marriages": [
     {
-      "spouse": "Lance Sheen",
+      "spouse": "Carol Sheen",
       "children": [
         {
           "name": "Patrick Sheen",
           "marriages": [
             {
+              "name": "Patrick & Kathleen",
               "spouse": "Kathleen Wurth",
               "divorced": true,
               "children": [
-                { "name": "Myf " }
+                { "name": "Myf" }
               ]
             },
             {
+              "name": "Patrick & Suzi",
               "spouse": "Suzi Sheen",
               "children": [
-                { "name": "Rebecca " },
+                { "name": "Rebecca" },
                 { "name": "[Son] (Suzi's child)" }
               ]
             }
@@ -27,12 +29,14 @@
           "name": "Elizabeth (Libby) O'Neill",
           "marriages": [
             {
+              "name": "Libby & Pat",
               "spouse": "Pat O'Neill",
               "children": [
                 {
                   "name": "Caroline Mackenzie",
                   "marriages": [
                     {
+                      "name": "Caroline & Alex",
                       "spouse": "Alex Mackenzie",
                       "children": [
                         { "name": "Edith Mackenzie" },
@@ -48,33 +52,36 @@
           ]
         },
         {
-  "name": "Martin Sheen",
-  "marriages": [
-    {
-      "spouse": "Tracy Sheen",
-      "children": [
-        {
-          "name": "Anthony Sheen",
+          "name": "Martin Sheen",
           "marriages": [
             {
-              "spouse": "Daniel Moore",
+              "name": "Martin & Tracy",
+              "spouse": "Tracy Sheen",
               "children": [
-                { "name": "Brock" }
+                {
+                  "name": "Anthony Sheen",
+                  "marriages": [
+                    {
+                      "name": "Anthony & Daniel",
+                      "spouse": "Daniel Moore",
+                      "children": [
+                        { "name": "Brock" }
+                      ]
+                    }
+                  ]
+                },
+                { "name": "Ben Sheen" },
+                { "name": "Emma Sheen" },
+                { "name": "Jordan Sheen" }
               ]
             }
           ]
         },
-        { "name": "Ben Sheen" },
-        { "name": "Emma Sheen" },
-        { "name": "Jordan Sheen" }
-      ]
-    }
-  ]
-},
-{        
+        {
           "name": "Andrew Sheen",
           "marriages": [
             {
+              "name": "Andrew & Dennis",
               "spouse": "Dennis Karatu",
               "divorced": true,
               "children": [
@@ -87,11 +94,17 @@
           "name": "Joanne Sheen",
           "marriages": [
             {
+              "name": "Joanne & Greg",
               "spouse": "Greg"
             }
           ]
         }
       ]
+    },
+    {
+      "spouse": "Lance Sheen",
+      "children": [],
+      "divorced": false
     }
   ]
 }
