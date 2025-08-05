@@ -13,11 +13,31 @@
       .then(response => response.json())
       .then(data => {
         console.log('Tree data loaded:', data);
-        // renderTree(data); <-- you'll replace this with actual rendering code later
+        const treeContainer = document.createElement('div');
+        document.body.appendChild(treeContainer);
+        renderTree(data, treeContainer);
       })
       .catch(error => {
         console.error('Error loading tree data:', error);
       });
+
+    function renderTree(data, container) {
+      const ul = document.createElement('ul');
+
+      const li = document.createElement('li');
+      li.textContent = data.name;
+      ul.appendChild(li);
+
+      if (data.children && data.children.length > 0) {
+        const childrenUl = document.createElement('ul');
+        data.children.forEach(child => {
+          renderTree(child, childrenUl);
+        });
+        li.appendChild(childrenUl);
+      }
+
+      container.appendChild(ul);
+    }
   </script>
 </body>
 </html>
