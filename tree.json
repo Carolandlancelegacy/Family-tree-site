@@ -1,21 +1,22 @@
 {
   "name": "Carol Sheen (deceased)",
+  "spouse": "Lance",
   "children": [
     {
       "name": "Patrick Sheen",
       "marriages": [
         {
-          "spouse": "Kathleen (divorced)",
+          "spouse": "Kathleen",
+          "divorced": true,
           "children": [
-            { "name": "Myf (daughter, first marriage)" }
-          ],
-          "divorced": true
+            { "name": "Myf" }
+          ]
         },
         {
-          "spouse": "Suzi (current wife)",
+          "spouse": "Suzi",
           "children": [
-            { "name": "Rebecca (stepdaughter, Suzi's child)" },
-            { "name": "[Son] (Suzi's child)" }
+            { "name": "Rebecca (stepdaughter)" },
+            { "name": "[Son] (Suzi’s child)" }
           ]
         }
       ]
@@ -37,8 +38,7 @@
             { "name": "Phillip" }
           ]
         }
-      ],
-      "widowed": true
+      ]
     },
     {
       "name": "Martin Sheen",
@@ -48,7 +48,7 @@
           "children": [
             { "name": "Anthony (oldest brother)" },
             { "name": "Ben (You)" },
-            { "name": "Emma (sister, deceased)" },
+            { "name": "Emma (deceased)" },
             { "name": "Jordan (youngest sister)" }
           ]
         }
@@ -58,11 +58,11 @@
       "name": "Andrew Sheen",
       "marriages": [
         {
-          "spouse": "Dennis (divorced)",
+          "spouse": "Dennis",
+          "divorced": true,
           "children": [
             { "name": "Zanesha" }
-          ],
-          "divorced": true
+          ]
         }
       ]
     },
@@ -70,8 +70,7 @@
       "name": "Joanne Sheen",
       "marriages": [
         {
-          "spouse": "Greg",
-          "married": true
+          "spouse": "Greg"
         }
       ]
     }
