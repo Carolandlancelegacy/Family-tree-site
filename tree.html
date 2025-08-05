@@ -26,74 +26,20 @@
       stroke: #ccc;
       stroke-width: 1.5px;
     }
+    .link.marriage {
+      stroke: #888;
+      stroke-dasharray: 4 2;
+    }
+    .link.divorced {
+      stroke: #cc0000;
+      stroke-dasharray: 4 4;
+    }
   </style>
 </head>
 <body>
 
 <script src="https://d3js.org/d3.v7.min.js"></script>
-<script>
-  // Set dimensions
-  const width = window.innerWidth;
-  const height = window.innerHeight;
-
-  // Create SVG canvas
-  const svg = d3.select("body").append("svg")
-    .attr("width", width)
-    .attr("height", height)
-    .call(
-      d3.zoom()
-        .scaleExtent([0.25, 2])
-        .on("zoom", (event) => {
-          g.attr("transform", event.transform);
-        })
-    );
-
-  // Group container
-  const g = svg.append("g")
-    .attr("transform", `translate(${width / 2}, 100)`);
-
-  // Load tree data
-  d3.json("tree.json").then(function(treeData) {
-    const root = d3.hierarchy(treeData);
-    const treeLayout = d3.tree().nodeSize([150, 100]);
-    treeLayout(root);
-
-    // Draw lines
-    g.selectAll(".link")
-      .data(root.links())
-      .join("path")
-      .attr("class", "link")
-      .attr("d", d3.linkVertical()
-        .x(d => d.x)
-        .y(d => d.y)
-      );
-
-    // Draw nodes
-    const node = g.selectAll(".node")
-      .data(root.descendants())
-      .join("g")
-      .attr("class", "node")
-      .attr("transform", d => `translate(${d.x},${d.y})`);
-
-    node.each(function(d) {
-      const text = d.data.name;
-      const padding = 10;
-
-      const textElement = d3.select(this).append("text")
-        .text(text)
-        .attr("text-anchor", "middle")
-        .attr("dy", "0.35em");
-
-      const bbox = textElement.node().getBBox();
-
-      d3.select(this).insert("rect", "text")
-        .attr("x", -bbox.width / 2 - padding / 2)
-        .attr("y", -bbox.height / 2 - padding / 2)
-        .attr("width", bbox.width + padding)
-        .attr("height", bbox.height + padding);
-    });
-  });
-</script>
+<script src="scripts.js"></script>
 
 </body>
 </html>
