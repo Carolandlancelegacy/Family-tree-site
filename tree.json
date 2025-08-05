@@ -1,81 +1,84 @@
 {
   "name": "Carol Sheen (deceased)",
   "marriages": [
+    { "spouse": "Lance" }
+  ],
+  "children": [
     {
-      "spouse": "Lance",
-      "children": [
+      "name": "Patrick Sheen",
+      "marriages": [
         {
-          "name": "Patrick Sheen",
-          "marriages": [
-            {
-              "spouse": "Kathleen",
-              "children": [
-                { "name": "Myf (daughter, first marriage)" }
-              ],
-              "divorced": true
-            },
-            {
-              "spouse": "Suzi",
-              "children": [
-                { "name": "Rebecca (Suzi's daughter)" },
-                { "name": "[Son] (Suzi's son)" }
-              ]
-            }
+          "spouse": "Kathleen (divorced)",
+          "divorced": true,
+          "children": [
+            { "name": "Myf (daughter, first marriage)" }
           ]
         },
         {
-          "name": "Elizabeth (Libby) O'Neill",
-          "marriages": [
+          "spouse": "Suzi (current wife)",
+          "children": [
+            { "name": "Rebecca (stepdaughter, Suzi's child)" },
+            { "name": "[Son] (Suzi's child)" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Elizabeth (Libby) O'Neill",
+      "widowed": true,
+      "marriages": [
+        {
+          "spouse": "Pat (deceased)",
+          "children": [
             {
-              "spouse": "Pat (deceased)",
-              "children": [
+              "name": "Caroline (married to Alex)",
+              "marriages": [
                 {
-                  "name": "Caroline (married to Alex)",
+                  "spouse": "Alex",
                   "children": [
                     { "name": "Edith" },
                     { "name": "Patrick" }
                   ]
-                },
-                { "name": "Colleen" },
-                { "name": "Phillip" }
+                }
               ]
-            }
-          ],
-          "widowed": true
-        },
-        {
-          "name": "Martin Sheen",
-          "marriages": [
-            {
-              "spouse": "Tracy",
-              "children": [
-                { "name": "Anthony (oldest brother)" },
-                { "name": "Ben (You)" },
-                { "name": "Emma (sister, deceased)" },
-                { "name": "Jordan (youngest sister)" }
-              ]
-            }
+            },
+            { "name": "Colleen" },
+            { "name": "Phillip" }
           ]
-        },
+        }
+      ]
+    },
+    {
+      "name": "Martin Sheen",
+      "marriages": [
         {
-          "name": "Andrew Sheen",
-          "marriages": [
-            {
-              "spouse": "Dennis",
-              "children": [
-                { "name": "Zanesha" }
-              ],
-              "divorced": true
-            }
+          "spouse": "Tracy",
+          "children": [
+            { "name": "Anthony (oldest brother)" },
+            { "name": "Ben (You)" },
+            { "name": "Emma (sister, deceased)" },
+            { "name": "Jordan (youngest sister)" }
           ]
-        },
+        }
+      ]
+    },
+    {
+      "name": "Andrew Sheen",
+      "marriages": [
         {
-          "name": "Joanne Sheen",
-          "marriages": [
-            {
-              "spouse": "Greg"
-            }
+          "spouse": "Dennis (divorced)",
+          "divorced": true,
+          "children": [
+            { "name": "Zanesha" }
           ]
+        }
+      ]
+    },
+    {
+      "name": "Joanne Sheen",
+      "marriages": [
+        {
+          "spouse": "Greg"
         }
       ]
     }
