@@ -9,10 +9,10 @@
       "marriages": [
         {
           "spouse": "Kathleen (divorced)",
-          "divorced": true,
           "children": [
             { "name": "Myf (daughter, first marriage)" }
-          ]
+          ],
+          "divorced": true
         },
         {
           "spouse": "Suzi (current wife)",
@@ -31,7 +31,7 @@
           "spouse": "Pat (deceased)",
           "children": [
             {
-              "name": "Caroline (married to Alex)",
+              "name": "Caroline",
               "marriages": [
                 {
                   "spouse": "Alex",
@@ -57,7 +57,7 @@
             { "name": "Anthony (oldest brother)" },
             { "name": "Ben (You)" },
             { "name": "Emma (sister, deceased)" },
-            { "name": "Jordan (youngest sister)" }
+            { "name": "Jordan (youngest sister)" },
           ]
         }
       ]
@@ -67,10 +67,10 @@
       "marriages": [
         {
           "spouse": "Dennis (divorced)",
-          "divorced": true,
           "children": [
             { "name": "Zanesha" }
-          ]
+          ],
+          "divorced": true
         }
       ]
     },
@@ -78,7 +78,8 @@
       "name": "Joanne Sheen",
       "marriages": [
         {
-          "spouse": "Greg"
+          "spouse": "Greg",
+          "married": true
         }
       ]
     }
