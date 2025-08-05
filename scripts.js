@@ -16,79 +16,92 @@ const g = svg.append("g")
   .attr("transform", `translate(${width / 2}, 100)`);
 
 d3.json("tree.json").then(function(data) {
+  const nodes = [];
   const links = [];
   let idCounter = 0;
 
-  function assignIds(node) {
-    node._id = idCounter++;
-    if (node.marriages) {
-      node.marriages.forEach(marriage => {
-        marriage._id = idCounter++;
+  function createNode(name) {
+    const id = idCounter++;
+    nodes.push({ id, name });
+    return id;
+  }
+
+  function buildTree(person, parentId = null) {
+    const personId = createNode(person.name);
+
+    if (parentId !== null) {
+      links.push({ source: parentId, target: personId, dashed: false });
+    }
+
+    if (person.marriages) {
+      person.marriages.forEach(marriage => {
+        const spouseId = createNode(marriage.spouse);
+        links.push({
+          source: personId,
+          target: spouseId,
+          dashed: marriage.divorced || false
+        });
+
         if (marriage.children) {
-          marriage.children.forEach(assignIds);
+          marriage.children.forEach(child => {
+            buildTree(child, personId);
+          });
         }
       });
     }
-    if (node.children) {
-      node.children.forEach(assignIds);
-    }
-  }
 
-  assignIds(data);
-
-  function buildHierarchy(node) {
-    const children = [];
-
-    if (node.children) {
-      children.push(...node.children.map(buildHierarchy));
-    }
-
-    if (node.marriages) {
-      node.marriages.forEach(marriage => {
-        const label = `${node.name} + ${marriage.spouse}${marriage.divorced ? " (divorced)" : ""}`;
-        const marriageNode = {
-          name: label,
-          _id: marriage._id,
-          isMarriage: true,
-          children: (marriage.children || []).map(buildHierarchy)
-        };
-        links.push({
-          source: node._id,
-          target: marriage._id,
-          dashed: !!marriage.divorced
-        });
-        children.push(marriageNode);
+    if (person.children) {
+      person.children.forEach(child => {
+        buildTree(child, personId);
       });
     }
 
-    return {
-      name: node.name,
-      _id: node._id,
-      children
-    };
+    return personId;
   }
 
-  const hierarchyData = d3.hierarchy(buildHierarchy(data));
+  buildTree(data);
 
-  const treeLayout = d3.tree().nodeSize([160, 100]);
-  treeLayout(hierarchyData);
+  const treeData = d3.stratify()
+    .id(d => d.id)
+    .parentId(d => null)(nodes);
+
+  const hierarchy = d3.hierarchy(data, d => {
+    const children = [];
+
+    if (d.marriages) {
+      d.marriages.forEach(m => {
+        if (m.children) {
+          children.push(...m.children);
+        }
+      });
+    }
+
+    if (d.children) {
+      children.push(...d.children);
+    }
+
+    return children;
+  });
+
+  const treeLayout = d3.tree().nodeSize([150, 100]);
+  treeLayout(hierarchy);
 
   const nodeMap = new Map();
-  hierarchyData.descendants().forEach(d => {
-    nodeMap.set(d.data._id, d);
+  hierarchy.descendants().forEach(d => {
+    nodeMap.set(d.data.name, d);
   });
 
   g.selectAll(".link")
     .data(links)
     .join("path")
     .attr("class", "link")
-    .attr("stroke-dasharray", d => d.dashed ? "4,2" : "none")
-    .attr("fill", "none")
+    .attr("stroke-dasharray", d => d.dashed ? "4,2" : null)
     .attr("stroke", "#999")
     .attr("stroke-width", 1.5)
+    .attr("fill", "none")
     .attr("d", d => {
-      const source = nodeMap.get(d.source);
-      const target = nodeMap.get(d.target);
+      const source = nodeMap.get(nodes[d.source].name);
+      const target = nodeMap.get(nodes[d.target].name);
       if (!source || !target) return;
       return d3.linkVertical()
         .x(d => d.x)
@@ -96,16 +109,15 @@ d3.json("tree.json").then(function(data) {
     });
 
   const node = g.selectAll(".node")
-    .data(hierarchyData.descendants())
+    .data(hierarchy.descendants())
     .join("g")
     .attr("class", "node")
     .attr("transform", d => `translate(${d.x},${d.y})`);
 
   node.each(function(d) {
-    const text = d.data.name;
     const padding = 10;
     const textElement = d3.select(this).append("text")
-      .text(text)
+      .text(d.data.name)
       .attr("text-anchor", "middle")
       .attr("dy", "0.35em");
 
