@@ -25,7 +25,7 @@ d3.json("tree.json").then(data => {
       return "link" + (d.target.data.divorced ? " divorced" : "");
     })
     .attr("fill", "none")
-    .attr("stroke", "##013220")
+    .attr("stroke", "#013220")
     .attr("stroke-linecap", "round")
     .attr("stroke-opacity", 1)
     .attr("stroke-width", 20)
