@@ -30,16 +30,7 @@ d3.json("tree.json").then(data => {
     .attr("d", d3.linkVertical()
       .x(d => d.x)
       .y(d => d.y));
-  /* Path lines between nodes */
-path {
-  filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.4));
-  transition: transform 0.2s ease;
-}
-
-/* On hover, slightly enlarge the connecting path */
-.node:hover path {
-  transform: scale(1.05);
-}
+ 
 
 
   // Draw nodes
