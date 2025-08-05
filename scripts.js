@@ -14,6 +14,11 @@ const svgGroup = svg.append("g");
 const treeLayout = d3.tree().nodeSize([160, 120]);
 
 d3.json("tree.json").then(data => {
+   console.log("Loaded data:", data);
+  ...
+}).catch(error => {
+  console.error("Failed to load tree.json", error);
+});
   const parsed = buildTree(data);
   const root = d3.hierarchy(parsed);
   treeLayout(root);
