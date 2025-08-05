@@ -89,19 +89,21 @@
 
   <script>
     function checkPassword() {
-      const input = document.getElementById("password").value.trim();
-      const errorBox = document.getElementById("error");
+  const input = document.getElementById("password").value.trim();
+  const errorBox = document.getElementById("error");
 
-      errorBox.textContent = "";
+  errorBox.textContent = "";
 
-      setTimeout(() => {
-        if (input === "cllegacy") {
-          window.location.href = "tree.html";
-        } else {
-          errorBox.textContent = "Incorrect password.";
-        }
-      }, 700); // short delay for brute force deterrent
+  setTimeout(() => {
+    if (input === "cllegacy") {
+      sessionStorage.setItem("authenticated", "true"); // <-- Set flag
+      window.location.href = "tree.html";
+    } else {
+      errorBox.textContent = "Incorrect password.";
     }
+  }, 700);
+}
+
   </script>
 
 </body>
