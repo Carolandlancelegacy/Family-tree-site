@@ -14,12 +14,7 @@ const svgGroup = svg.append("g");
 const treeLayout = d3.tree().nodeSize([160, 120]);
 
 d3.json("tree.json").then(data => {
-   console.log("Loaded data:", data);
-  ...
-}).catch(error => {
-  console.error("Failed to load tree.json", error);
-});
-  const parsed = buildTree(data);
+  const parsed = buildRoot(data);
   const root = d3.hierarchy(parsed);
   treeLayout(root);
 
@@ -58,26 +53,45 @@ d3.json("tree.json").then(data => {
     .text(d => d.data.name);
 });
 
-function buildTree(person) {
-  const node = { name: person.name, children: [] };
+function buildRoot(person) {
+  const node = { name: person.name || "Root", children: [] };
 
   if (person.marriages) {
     person.marriages.forEach(marriage => {
-      // Add the spouse node
       const spouseNode = { name: marriage.spouse };
 
-      // Virtual couple node for children
       const couple = {
         name: `${person.name} & ${marriage.spouse}`,
         children: []
       };
 
-      // Recurse into children
       if (marriage.children) {
         couple.children = marriage.children.map(buildTree);
       }
 
-      // Add spouse and couple node
+      node.children.push(spouseNode, couple);
+    });
+  }
+
+  return node;
+}
+
+function buildTree(person) {
+  const node = { name: person.name, children: [] };
+
+  if (person.marriages) {
+    person.marriages.forEach(marriage => {
+      const spouseNode = { name: marriage.spouse };
+
+      const couple = {
+        name: `${person.name} & ${marriage.spouse}`,
+        children: []
+      };
+
+      if (marriage.children) {
+        couple.children = marriage.children.map(buildTree);
+      }
+
       node.children.push(spouseNode, couple);
     });
   }
