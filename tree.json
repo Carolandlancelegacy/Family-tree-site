@@ -1,8 +1,8 @@
 {
-  "name": "Carol Sheen",
+  "name": "Root",
   "marriages": [
     {
-      "spouse": "Lance (deceased)",
+      "spouse": "Carol Sheen",
       "children": [
         {
           "name": "Patrick Sheen",
@@ -82,6 +82,11 @@
           ]
         }
       ]
+    },
+    {
+      "spouse": "Lance (deceased)",
+      "children": [],
+      "divorced": false
     }
   ]
 }
