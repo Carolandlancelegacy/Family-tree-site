@@ -32,7 +32,8 @@ d3.json("tree.json").then(function(data) {
     if (node.marriages) {
       node.marriages.forEach(marriage => {
         const spouseId = idCounter++;
-        nodes.push({ id: spouseId, name: marriage.spouse });
+        const spouseNode = { id: spouseId, name: marriage.spouse };
+        nodes.push(spouseNode);
 
         links.push({
           source: nodeId,
@@ -41,7 +42,7 @@ d3.json("tree.json").then(function(data) {
         });
 
         if (marriage.children) {
-          marriage.children.forEach(child => traverse(child, { _id: spouseId }));
+          marriage.children.forEach(child => traverse(child, spouseNode));
         }
       });
     }
@@ -51,16 +52,7 @@ d3.json("tree.json").then(function(data) {
     }
   }
 
-  // Manually set the root node
-  const rootId = idCounter++;
-  data._id = rootId;
-  nodes.push({ id: rootId, name: data.name });
-
-  if (data.children) {
-    data.children.forEach(child => {
-      traverse(child, data);
-    });
-  }
+  traverse(data);
 
   const treeLayout = d3.tree().nodeSize([150, 100]);
 
