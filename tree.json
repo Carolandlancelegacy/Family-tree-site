@@ -1,16 +1,6 @@
 {
   "people": [
     {
-      "name": "Carol Sheen",
-      "gender": "female",
-      "spouse": "Lance Sheen"
-    },
-    {
-      "name": "Lance Sheen",
-      "gender": "male",
-      "spouse": "Carol Sheen"
-    },
-    {
       "name": "Carol & Lance Sheen (Union)",
       "children": [
         "Patrick Sheen",
@@ -19,6 +9,16 @@
         "Andrew Sheen",
         "Joanne Sheen"
       ]
+    },
+    {
+      "name": "Carol Sheen",
+      "gender": "female",
+      "spouse": "Lance Sheen"
+    },
+    {
+      "name": "Lance Sheen",
+      "gender": "male",
+      "spouse": "Carol Sheen"
     },
     {
       "name": "Patrick Sheen",
