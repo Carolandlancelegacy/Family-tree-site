@@ -48,27 +48,30 @@
           ]
         },
         {
-          "name": "Martin Sheen",
+  "name": "Martin Sheen",
+  "marriages": [
+    {
+      "spouse": "Tracy Sheen",
+      "children": [
+        {
+          "name": "Anthony Sheen",
           "marriages": [
             {
-              "spouse": "Tracy Sheen",
+              "spouse": "Daniel Moore",
               "children": [
-                { 
-                  "name": "Anthony Sheen",
-                  "marriages": [
-                    {
-                      "spouse": "Daniel Moore",
-                      "children": [
-                        { "name": "Brock" },
-                      ]
-                    }  
-                { "name": "Ben Sheen(You)" },
-                { "name": "Emma Sheen(sister, deceased)" },
-                { "name": "Jordan Sheen(youngest sister)" }
+                { "name": "Brock" }
               ]
             }
           ]
         },
+        { "name": "Ben Sheen(You)" },
+        { "name": "Emma Sheen(sister, deceased)" },
+        { "name": "Jordan Sheen(youngest sister)" }
+      ]
+    }
+  ]
+}
+
         {
           "name": "Andrew Sheen",
           "marriages": [
