@@ -29,9 +29,9 @@ const diagonal = d3.linkHorizontal()
     tree(root);
 
     const svg = d3.select("body").append("svg")
-      .attr("width", width)
-      .attr("height", 1000)
-      .attr("viewBox", [-width / 2, 0, width, 1000])
+      .attr("width", 1200)
+.attr("height", 1000)
+.attr("viewBox", [-100, 0, 1200, 1000])
       .style("font", "14px sans-serif");
 
     const g = svg.append("g");
@@ -47,12 +47,25 @@ const diagonal = d3.linkHorizontal()
       .attr("d", diagonal);
 
     const node = g.append("g")
-      .attr("stroke-linejoin", "round")
-      .attr("stroke-width", 3)
-      .selectAll("g")
-      .data(root.descendants())
-      .join("g")
-      .attr("transform", d => `translate(${d.x},${d.y})`);
+  .attr("stroke-linejoin", "round")
+  .attr("stroke-width", 3)
+  .selectAll("g")
+  .data(root.descendants())
+  .join("g")
+  .attr("transform", d => `translate(${d.y},${d.x})`); // flip x/y for vertical layout
+
+// Add a circle for each node
+node.append("circle")
+  .attr("r", 40)
+  .attr("fill", "#f0f0f0")
+  .attr("stroke", "#555");
+
+// Add text inside the circle
+node.append("text")
+  .attr("dy", "0.31em")
+  .attr("text-anchor", "middle")
+  .style("font", "12px sans-serif")
+  .text(d => d.data.name);
 
     node.append("rect")
       .attr("fill", "#f8f8f8")
