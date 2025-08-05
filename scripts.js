@@ -1,4 +1,3 @@
-// script.js
 const width = window.innerWidth;
 const height = window.innerHeight;
 
@@ -17,67 +16,60 @@ const g = svg.append("g")
   .attr("transform", `translate(${width / 2}, 100)`);
 
 d3.json("tree.json").then(function(data) {
-  const nodes = [];
   const links = [];
-
   let idCounter = 0;
 
-  function traverse(node, parent = null) {
-    const nodeId = idCounter++;
-    node._id = nodeId;
-    nodes.push({ id: nodeId, name: node.name });
+  function assignIds(node) {
+    node._id = idCounter++;
+    if (node.marriages) {
+      node.marriages.forEach(marriage => {
+        marriage._id = idCounter++;
+        if (marriage.children) {
+          marriage.children.forEach(assignIds);
+        }
+      });
+    }
+    if (node.children) {
+      node.children.forEach(assignIds);
+    }
+  }
 
-    if (parent !== null) {
-      links.push({ source: parent._id, target: nodeId, dashed: false });
+  assignIds(data);
+
+  function buildHierarchy(node) {
+    const children = [];
+
+    if (node.children) {
+      children.push(...node.children.map(buildHierarchy));
     }
 
     if (node.marriages) {
       node.marriages.forEach(marriage => {
-        const spouseId = idCounter++;
-        const spouseLabel = `${marriage.spouse}`;
-        nodes.push({ id: spouseId, name: spouseLabel });
-
+        const marriageNode = {
+          name: `${node.name} + ${marriage.spouse}${marriage.divorced ? " (divorced)" : ""}`,
+          _id: marriage._id,
+          isMarriage: true,
+          children: (marriage.children || []).map(buildHierarchy)
+        };
         links.push({
-          source: nodeId,
-          target: spouseId,
-          dashed: marriage.divorced || false
+          source: node._id,
+          target: marriage._id,
+          dashed: !!marriage.divorced
         });
-
-        if (marriage.children) {
-          marriage.children.forEach(child => traverse(child, { _id: spouseId }));
-        }
+        children.push(marriageNode);
       });
     }
 
-    if (node.children) {
-      node.children.forEach(child => traverse(child, node));
-    }
+    return {
+      name: node.name,
+      _id: node._id,
+      children
+    };
   }
 
-  traverse(data);
+  const hierarchyData = d3.hierarchy(buildHierarchy(data));
 
-  const root = d3.stratify()
-    .id(d => d.id)
-    .parentId(d => null)(nodes);
-
-  const treeLayout = d3.tree().nodeSize([150, 100]);
-
-  const hierarchyData = d3.hierarchy(data, d => {
-    const merged = [];
-
-    if (d.marriages) {
-      d.marriages.forEach(m => {
-        if (m.children) merged.push(...m.children);
-      });
-    }
-
-    if (d.children) {
-      merged.push(...d.children);
-    }
-
-    return merged;
-  });
-
+  const treeLayout = d3.tree().nodeSize([160, 100]);
   treeLayout(hierarchyData);
 
   const nodeMap = new Map();
