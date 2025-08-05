@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Family Tree Viewer</title>
   <style>
     body {
@@ -10,7 +10,6 @@
       overflow: hidden;
       background: #fdfaf6;
     }
-
     .node rect {
       fill: white;
       stroke: #333;
@@ -18,18 +17,15 @@
       rx: 4;
       ry: 4;
     }
-
     .node text {
       font-size: 12px;
       pointer-events: none;
     }
-
     .link {
       fill: none;
       stroke: #ccc;
       stroke-width: 1.5px;
     }
-
     .link.divorced {
       stroke-dasharray: 4;
       stroke: #999;
@@ -37,9 +33,12 @@
   </style>
 </head>
 <body>
+  <svg></svg>
 
-<script src="https://d3js.org/d3.v7.min.js"></script>
-<script src="scripts.js"></script>
+  <!-- Load D3 from CDN -->
+  <script src="https://d3js.org/d3.v7.min.js"></script>
 
+  <!-- Your Script -->
+  <script src="scripts.js"></script>
 </body>
 </html>
