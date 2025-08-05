@@ -32,14 +32,5 @@ path {
 .node:hover path {
   transform: scale(1.05);
 }
-.link {
-  fill: none;
-  stroke: #aaa;
-  stroke-width: 2px;
-}
 
-.link.divorced {
-  stroke-dasharray: 5,5;
-  stroke: red;
-}
 
