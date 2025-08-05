@@ -81,18 +81,41 @@
         .attr("class", "node")
         .attr("transform", d => `translate(${d.x},${d.y})`);
 
-      node.append("rect")
-        .attr("x", -75)
-        .attr("y", -15)
-        .attr("width", 150)
-        .attr("height", 30)
-        .attr("rx", 10)
-        .attr("ry", 10);
+      // Replace this block:
+      // node.append("rect")
+      //   .attr("x", -75)
+      //   .attr("y", -15)
+      //   .attr("width", 150)
+      //   .attr("height", 30)
+      //   .attr("rx", 10)
+      //   .attr("ry", 10);
 
-      node.append("text")
-        .attr("text-anchor", "middle")
-        .attr("dy", "0.35em")
-        .text(d => d.data.name);
+      // node.append("text")
+      //   .attr("text-anchor", "middle")
+      //   .attr("dy", "0.35em")
+      //   .text(d => d.data.name);
+
+// With this block:
+      node.each(function(d) {
+        const group = d3.select(this);
+
+        const text = group.append("text")
+          .attr("dy", "0.35em")
+          .attr("text-anchor", "middle")
+          .text(d.data.name);
+
+        const bbox = text.node().getBBox();
+        const padding = 10;
+
+        group.insert("rect", "text")
+          .attr("x", -bbox.width / 2 - padding)
+          .attr("y", -bbox.height / 2 - padding)
+          .attr("width", bbox.width + padding * 2)
+          .attr("height", bbox.height + padding * 2)
+          .attr("rx", 10)
+          .attr("ry", 10);
+      });
+
 
       // Auto-center
       const xExtent = d3.extent(root.descendants(), d => d.x);
