@@ -27,7 +27,7 @@ d3.json("tree.json").then(data => {
     .attr("fill", "none")
     .attr("stroke", "##013220")
     .attr("stroke-linecap", "round")
-    .attr("stroke-opacity", 0.8)
+    .attr("stroke-opacity", 1)
     .attr("stroke-width", 20)
     .attr("d", d3.linkVertical()
       .x(d => d.x)
