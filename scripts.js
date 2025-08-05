@@ -12,6 +12,16 @@ const svgGroup = svg.append("g");
 const treeLayout = d3.tree().nodeSize([180, 120]);
 
 d3.json("tree.json").then(data => {
+  Promise.all([
+  d3.json("tree.json"),
+  d3.json("bios.json")
+]).then(([data, bios]) => {
+  const rootData = buildRoot(data);
+  const root = d3.hierarchy(rootData);
+  treeLayout(root);
+
+  // existing code continues...
+
   const rootData = buildRoot(data);
   const root = d3.hierarchy(rootData);
   treeLayout(root);
@@ -75,6 +85,42 @@ node.append("path")
   .attr("text-anchor", "middle")
   .attr("fill", "#fff") // white text on green leaf
   .text(d => d.data.name);
+      // Add tooltip group
+  const tooltip = d3.select("body")
+    .append("div")
+    .attr("class", "tooltip")
+    .style("position", "absolute")
+    .style("z-index", "10")
+    .style("visibility", "hidden")
+    .style("background", "#f4f4f4")
+    .style("border", "1px solid #ccc")
+    .style("padding", "10px")
+    .style("border-radius", "6px")
+    .style("box-shadow", "0 2px 10px rgba(0,0,0,0.2)")
+    .style("max-width", "220px");
+
+  node.on("mouseover", function (event, d) {
+    const bio = bios[d.data.name];
+    if (bio) {
+      const interestList = bio.interests.map(item => `<li>${item}</li>`).join("");
+      tooltip.html(`
+        <img src="${bio.image}" style="width: 100%; border-radius: 4px;"><br>
+        <strong>${d.data.name}</strong><br>
+        <em>Born:</em> ${bio.birthdate}<br>
+        <em>Star sign:</em> ${bio.starsign}<br>
+        <em>Interests:</em>
+        <ul style="margin: 0 0 0 16px; padding: 0;">${interestList}</ul>
+      `).style("visibility", "visible");
+    }
+  })
+  .on("mousemove", function (event) {
+    tooltip.style("top", (event.pageY - 10) + "px")
+           .style("left", (event.pageX + 15) + "px");
+  })
+  .on("mouseout", function () {
+    tooltip.style("visibility", "hidden");
+  });
+
 
 });
 
