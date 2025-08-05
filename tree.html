@@ -6,52 +6,80 @@
   <title>Family Tree Viewer</title>
   <link rel="stylesheet" href="style.css" />
   <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: sans-serif;
+      text-align: center;
+    }
+    svg {
+      width: 100vw;
+      height: 100vh;
+    }
+    .link {
+      fill: none;
+      stroke: #ccc;
+      stroke-width: 2px;
+    }
+    .node circle {
+      fill: #fff;
+      stroke: #333;
+      stroke-width: 2px;
+    }
+    .node text {
+      font-size: 14px;
+      fill: #333;
+    }
+  </style>
 </head>
 <body>
   <h1>Family Tree Viewer</h1>
   <p>This is where your visual tree will appear.</p>
-  <svg id="tree-svg" viewBox="0 0 1200 3000" preserveAspectRatio="xMidYMin meet"></svg>
+  <svg id="tree-svg"></svg>
 
   <script>
-    const svg = d3.select("svg"),
-          width = 1200,
-          height = 3000;
+    const svg = d3.select("#tree-svg");
+    const g = svg.append("g");
 
-    const g = svg.append("g")
-      .attr("transform", `translate(${width / 2}, 100)`);
+    const treeLayout = d3.tree().nodeSize([200, 150]);
 
-    const tree = d3.tree().nodeSize([100, 200]);
-    const stratify = d3.stratify().parentId(d => d.id.substring(0, d.id.lastIndexOf(".")));
-
-    d3.json("tree.json").then(function(data) {
+    d3.json("tree.json").then(data => {
       const root = d3.hierarchy(data);
-      tree(root);
+      treeLayout(root);
 
-      // Links
+      // Calculate bounds to centre it
+      let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+      root.descendants().forEach(d => {
+        if (d.x < minX) minX = d.x;
+        if (d.x > maxX) maxX = d.x;
+        if (d.y < minY) minY = d.y;
+        if (d.y > maxY) maxY = d.y;
+      });
+
+      const padding = 100;
+      const width = maxX - minX + padding * 2;
+      const height = maxY - minY + padding * 2;
+
+      svg.attr("viewBox", `${minX - padding} ${minY - padding} ${width} ${height}`);
+
+      // Draw links
       g.selectAll(".link")
         .data(root.links())
         .join("path")
         .attr("class", "link")
-        .attr("fill", "none")
-        .attr("stroke", "#ccc")
-        .attr("stroke-width", 2)
         .attr("d", d3.linkVertical()
           .x(d => d.x)
           .y(d => d.y));
 
-      // Nodes
+      // Draw nodes
       const node = g.selectAll(".node")
         .data(root.descendants())
         .join("g")
         .attr("class", "node")
         .attr("transform", d => `translate(${d.x},${d.y})`);
 
-      node.append("circle")
-        .attr("r", 20)
-        .attr("fill", "#fff")
-        .attr("stroke", "black")
-        .attr("stroke-width", 2);
-
+      node.append("circle").attr("r", 20);
       node.append("text")
         .attr("dy", 5)
         .attr("x", d => d.children ? -25 : 25)
