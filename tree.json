@@ -15,10 +15,10 @@
               ]
             },
             {
-              "spouse": "Suzi",
+              "spouse": "Suzi (current wife)",
               "children": [
-                { "name": "Rebecca" },
-                { "name": "[Son]" }
+                { "name": "Rebecca (stepdaughter, Suzi's child)" },
+                { "name": "[Son] (Suzi's child)" }
               ]
             }
           ]
@@ -53,10 +53,10 @@
             {
               "spouse": "Tracy",
               "children": [
-                { "name": "Anthony" },
+                { "name": "Anthony (oldest brother)" },
                 { "name": "Ben (You)" },
-                { "name": "Emma (deceased)" },
-                { "name": "Jordan" }
+                { "name": "Emma (sister, deceased)" },
+                { "name": "Jordan (youngest sister)" }
               ]
             }
           ]
