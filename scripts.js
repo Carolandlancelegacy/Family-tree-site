@@ -17,25 +17,19 @@ d3.json("tree.json").then(data => {
   const root = d3.hierarchy(parsed);
   treeLayout(root);
 
-  // Draw links
   svgGroup.selectAll("path.link")
     .data(root.links())
     .enter()
     .append("path")
     .attr("class", "link")
     .attr("fill", "none")
-    .attr("stroke", d => {
-      return d.target.data.isDivorced ? "#999" : "#aaa";
-    })
-    .attr("stroke-dasharray", d => {
-      return d.target.data.isDivorced ? "4,2" : "0";
-    })
+    .attr("stroke", d => d.target.data.isDivorced ? "#999" : "#aaa")
+    .attr("stroke-dasharray", d => d.target.data.isDivorced ? "4,2" : "0")
     .attr("stroke-width", 2)
     .attr("d", d3.linkVertical()
       .x(d => d.x)
       .y(d => d.y));
 
-  // Draw nodes
   const node = svgGroup.selectAll("g.node")
     .data(root.descendants())
     .enter()
@@ -64,17 +58,17 @@ function buildRoot(person) {
 
   if (person.marriages) {
     person.marriages.forEach(marriage => {
-      const couple = {
+      const coupleNode = {
         name: `${person.name} + ${marriage.spouse}`,
         isDivorced: marriage.divorced || false,
         children: []
       };
 
       if (marriage.children) {
-        couple.children = marriage.children.map(buildTree);
+        coupleNode.children = marriage.children.map(buildTree);
       }
 
-      node.children.push(couple);
+      node.children.push(coupleNode);
     });
   }
 
@@ -86,17 +80,17 @@ function buildTree(person) {
 
   if (person.marriages) {
     person.marriages.forEach(marriage => {
-      const couple = {
+      const coupleNode = {
         name: `${person.name} + ${marriage.spouse}`,
         isDivorced: marriage.divorced || false,
         children: []
       };
 
       if (marriage.children) {
-        couple.children = marriage.children.map(buildTree);
+        coupleNode.children = marriage.children.map(buildTree);
       }
 
-      node.children.push(couple);
+      node.children.push(coupleNode);
     });
   }
 
